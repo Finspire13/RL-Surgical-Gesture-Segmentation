@@ -107,10 +107,6 @@ def main():
     args = parser.parse_args()
     logger.configure()
 
-    print(args.feature_type)
-    print(args.split_idx)
-    print(args.run_idx)
-
     rng_seed = randint(0, 1000)
     print(rng_seed)
 

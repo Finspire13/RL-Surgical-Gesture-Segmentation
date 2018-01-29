@@ -19,8 +19,6 @@ def main():
     # Set seed
     #utils.set_global_seeds(777, True)
 
-    full_result = np.zeros((2, tcn_run_num, split_num, 6))
-
     for feature_idx in range(2):
 
         feature_type = ['sensor', 'visual'][feature_idx]
@@ -40,7 +38,10 @@ def main():
 
             get_feature_by_split(model_params, feature_type, naming)
 
-            full_result[feature_idx, run_idx, :, :] = run_result
+            result_file = os.path.join(result_dir, 
+                            'tcn_result_{}.npy'.format(naming))
+
+            np.save(result_file, run_result)
 
             # print('Acc: ', result[0].mean())
             # print('Edit: ', result[1].mean())
@@ -48,9 +49,6 @@ def main():
             # print('F25: ', result[3].mean())
             # print('F50: ', result[4].mean())
             # print('F75: ', result[5].mean())
-
-    result_file = os.path.join(result_dir, 'tcn_result.npy')
-    np.save(result_file, full_result)
 
 if __name__ == '__main__':
     main()

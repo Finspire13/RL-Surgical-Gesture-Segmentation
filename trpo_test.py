@@ -79,7 +79,7 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
     # Test
     test_num = len(FeatureDataset(test_file))
 
-    result = []
+    result = np.zeros((test_num, trpo_test_run_num, 9))
 
     for i in range(test_num):
 
@@ -94,28 +94,26 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
                             osp.join(logger.get_dir(), str(rank)))
 
 
-        episode_result = [[] for i in range(9)]
+        episode_result = np.zeros((trpo_test_run_num, 9))
 
         for episode in range(trpo_test_run_num):
             obs, done = env.reset(), False
             while not done:
                 obs, rew, done, _ = env.step(pi.act(True, obs)[0])
 
-            episode_result[0].append(raw_env.get_accuracy())
-            episode_result[1].append(raw_env.get_edit_score())
-            episode_result[2].append(raw_env.get_overlap_f1(0.1))
-            episode_result[3].append(raw_env.get_overlap_f1(0.25))
-            episode_result[4].append(raw_env.get_overlap_f1(0.5))
-            episode_result[5].append(raw_env.get_overlap_f1(0.75))
-
-            #if env.get_accuracy() != 100 and env.get_edit_score() == 100:
+            episode_result[episode,0] = raw_env.get_accuracy()
+            episode_result[episode,1] = raw_env.get_edit_score()
+            episode_result[episode,2] = raw_env.get_overlap_f1(0.1)
+            episode_result[episode,3] = raw_env.get_overlap_f1(0.25)
+            episode_result[episode,4] = raw_env.get_overlap_f1(0.5)
+            episode_result[episode,5] = raw_env.get_overlap_f1(0.75)
                 
             hist = np.array(raw_env.full_act_hist)
             hist = hist[:,0].astype(int)
 
-            episode_result[6].append((hist==0).sum() / hist.size)
-            episode_result[7].append((hist==1).sum() / hist.size)
-            episode_result[8].append((hist==2).sum() / hist.size)
+            episode_result[episode,6] = (hist==0).sum() / hist.size
+            episode_result[episode,7] = (hist==1).sum() / hist.size
+            episode_result[episode,8] = (hist==2).sum() / hist.size
 
             #if raw_env.get_edit_score() < 70:
             # pdb.set_trace()
@@ -140,24 +138,23 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
 
             # utils.plot_barcode(gt=raw_env.label, pred=raw_env.result)
 
-        result.append(episode_result)
+        result[i,:,:] = episode_result
 
-        episode_result = np.array(episode_result)
-        print('Acc: ', episode_result[0].mean())
-        print('Edit: ', episode_result[1].mean())
-        print('F10: ', episode_result[2].mean())
-        print('F25: ', episode_result[3].mean())
-        print('F50: ', episode_result[4].mean())
-        print('F75: ', episode_result[5].mean())
-        print('K0: ', episode_result[6].mean())
-        print('K1: ', episode_result[7].mean())
-        print('K2: ', episode_result[8].mean())
+        print('Acc: ', episode_result.mean(0)[0])
+        print('Edit: ', episode_result.mean(0)[1])
+        print('F10: ', episode_result.mean(0)[2])
+        print('F25: ', episode_result.mean(0)[3])
+        print('F50: ', episode_result.mean(0)[4])
+        print('F75: ', episode_result.mean(0)[5])
+        print('K0: ', episode_result.mean(0)[6])
+        print('K1: ', episode_result.mean(0)[7])
+        print('K2: ', episode_result.mean(0)[8])
 
     result_file = 'result_{}_tcn_{}_split_{}_run_{}'.format(feature_type, 
                                          tcn_run_idx, split_idx, run_idx)
     result_file = os.path.join(result_dir, result_file)
 
-    np.save(result_file, np.array(result))  #(5, 6, 10)
+    np.save(result_file, result)  #(5, 10, 9)
 
 
 def main():
@@ -170,11 +167,7 @@ def main():
     parser.add_argument('--run_idx', type=int, default=1)
     
     args = parser.parse_args()
-
-    print(args.feature_type)
-    print(args.split_idx)
-    print(args.run_idx)
-
+    
     if args.feature_type not in ['sensor', 'visual']:
         raise Exception('Invalid Feature Type')
 
