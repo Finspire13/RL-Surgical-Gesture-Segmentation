@@ -77,4 +77,5 @@ discount_factor = 0.9
 # Experiment Setup
 tcn_run_num = 3
 trpo_test_run_num = 2
-#trpo_train_run_num = 3
+trpo_train_run_num = 3
+split_num = 8

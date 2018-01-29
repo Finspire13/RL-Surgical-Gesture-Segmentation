@@ -88,7 +88,11 @@ def train(seed, feature_type, tcn_run_idx, split_idx, run_idx):
 
     saver = tf.train.Saver()
     saver.save(sess, model_file)
-
+    
+    sess.close()
+    #tf.reset_default_graph()
+    
+    
 
 
 def main():
@@ -114,8 +118,8 @@ def main():
         raise Exception('Invalid Feature Type')
 
     train(seed=rng_seed,
-          tcn_run_idx=args.tcn_run_idx,
           feature_type=args.feature_type,
+          tcn_run_idx=args.tcn_run_idx,
           split_idx=args.split_idx,
           run_idx=args.run_idx)
 

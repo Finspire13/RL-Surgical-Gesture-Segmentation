@@ -7,7 +7,7 @@ import os
 import numpy as np
 from tcn_train_test import cross_validate
 from get_tcn_feature import get_feature_by_split
-from config import result_dir, model_params, train_params, tcn_run_num
+from config import *
 
 import pdb
 
@@ -19,7 +19,7 @@ def main():
     # Set seed
     #utils.set_global_seeds(777, True)
 
-    full_result = np.zeros((2, tcn_run_num, 8, 6))
+    full_result = np.zeros((2, tcn_run_num, split_num, 6))
 
     for feature_idx in range(2):
 
