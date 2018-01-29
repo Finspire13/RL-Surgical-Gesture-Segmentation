@@ -46,7 +46,7 @@ model_params = {'class_num': gesture_class_num,
 
 
 # Training parameters
-train_params = {'num_epochs': 2, #300
+train_params = {'num_epochs': 300, 
                 'learning_rate': 0.00001,     
                 'batch_size': 1, 
                 'weight_decay': 0.0001} 
@@ -67,15 +67,12 @@ pi_hidden_size = 64
 pi_hidden_layer = 1
 
 # RL training parameters
-trpo_num_timesteps = 1e3
-discount_factor = 0.9
-
-
-
+trpo_num_timesteps = 5e5
+discount_factor = 0.8
 
 
 # Experiment Setup
 tcn_run_num = 2
-trpo_test_run_num = 1
-trpo_train_run_num = 2
+trpo_test_run_num = 10
+trpo_train_run_num = 3
 split_num = 8
