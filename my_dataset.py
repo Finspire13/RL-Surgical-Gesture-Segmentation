@@ -11,6 +11,7 @@ import utils
 
 import pdb
 
+# For TCN: raw feature
 class JIGSAWS_Dataset(Dataset):
     def __init__(self, feature_dir, trail_list, feature_type,
                  encode_level, sample_rate=1, sample_aug=True,
@@ -123,3 +124,30 @@ class JIGSAWS_Dataset(Dataset):
 
     def get_stds(self):
         return self.feature_stds
+
+
+# For RL: tcn feature
+class FeatureDataset(Dataset):
+    def __init__(self, data_file, test_index=None):
+        super(FeatureDataset, self).__init__()
+
+        self.data = np.load(data_file)
+        self.test_index = test_index
+
+    def __len__(self):
+        if self.test_index is not None:
+            return 1
+        else:
+            return self.data.shape[0]
+
+    def __getitem__(self, idx):
+        
+        if self.test_index is not None:
+            value = self.data[self.test_index][0]
+            label = self.data[self.test_index][1]
+        else:
+            value = self.data[idx][0]
+            label = self.data[idx][1]
+
+        return {'value': value[label!=-1],
+                'label': label[label!=-1]}

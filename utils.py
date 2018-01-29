@@ -84,28 +84,29 @@ def clear_dir(dir):
         except NotADirectoryError:
             os.remove(filepath)
 
-
 # To be improved
 def set_up_dirs():
-    from config import (result_dir, tcn_log_dir,
-                        tcn_model_dir, tcn_feature_dir)
+    from config import (result_dir, tcn_log_dir, tcn_model_dir, 
+                        tcn_feature_dir, trpo_model_dir)
 
-    for i in [result_dir, tcn_log_dir, tcn_model_dir, tcn_feature_dir]:
+    for i in [result_dir, tcn_log_dir, tcn_model_dir, 
+              tcn_feature_dir, trpo_model_dir]:
         if not os.path.exists(i):
             os.makedirs(i)
 
 # To be improved
 def clean_up():
-    from config import (result_dir, tcn_log_dir,
-                        tcn_model_dir, tcn_feature_dir)
+    from config import (result_dir, tcn_log_dir, tcn_model_dir, 
+                        tcn_feature_dir, trpo_model_dir)
 
-    for i in [result_dir, tcn_log_dir, tcn_model_dir, tcn_feature_dir]:
+    for i in [result_dir, tcn_log_dir, tcn_model_dir, 
+              tcn_feature_dir, trpo_model_dir]:
         clear_dir(i)    
 
 
 ################## Gesture Statistics ####################
 
-def get_class_counts(dataset):
+def get_class_counts(dataset):  # RAW
     from config import gesture_class_num
     class_num = gesture_class_num
 
@@ -120,7 +121,7 @@ def get_class_counts(dataset):
 
     return counts
 
-def get_class_weights(dataset):
+def get_class_weights(dataset):  # RAW
     from config import gesture_class_num
     class_num = gesture_class_num
 
@@ -132,6 +133,67 @@ def get_class_weights(dataset):
         weights[i] = weights[i] * class_num / w_sum
 
     return weights
+
+
+def get_transition_matrix(dataset): # TCN
+    from config import gesture_class_num
+
+    class_num = gesture_class_num + 1  # Including Init
+    matrix = np.zeros((class_num, class_num))  # 10: Init
+
+    for data in dataset:
+        gesture = data['label']
+
+        last = class_num - 1  #init
+        for i in range(len(gesture)):
+            current = int(gesture[i])
+            matrix[last][current] += 1
+            last = current
+
+    return matrix.astype(int)
+
+
+def get_normalized_transition_matrix(dataset): # TCN
+    from config import gesture_class_num
+
+    class_num = gesture_class_num + 1
+    matrix = get_transition_matrix(dataset).astype(float)
+
+    for i in range(class_num):
+        matrix[i][i] = 0
+        matrix[i] = matrix[i] / (matrix[i].sum() + 1e-20)
+
+    return matrix
+
+
+def get_duration_statistics(dataset): # TCN
+    from config import gesture_class_num
+    
+    class_num = gesture_class_num
+    durations = [[] for i in range(class_num)]
+
+    for data in dataset:
+        gesture = data['label']
+
+        count = 1
+        for i in range(1, len(gesture)):
+            if gesture[i-1] == gesture[i]:
+                count += 1
+            else:
+                durations[gesture[i-1]].append(count)
+                count = 1
+
+        durations[gesture[i-1]].append(count)
+
+
+    mus = [np.array(i).mean() for i in durations]
+    sigmas = [np.array(i).std() for i in durations]
+
+    # Empty durations handled: Caution!!!
+    mus = [0 if np.isnan(i) else i  for i in mus]
+    sigmas = [1 if np.isnan(i) else i  for i in sigmas]
+
+    return np.array([mus, sigmas])
 
 
 ################## Visualization ####################
@@ -196,7 +258,7 @@ def get_result_string(result):
 
     result_string = ''
     for i in range(result.size):
-        result_string += str(int(result[i]))
+        result_string += str(int(result[i]))  # No negtive allowed
 
     result_string = ''.join(i for i, _ in groupby(result_string))
     return result_string

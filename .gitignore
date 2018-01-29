@@ -2,6 +2,7 @@ tcn_features/*
 tcn_log/*
 tcn_model/*
 result/*
+trpo_model/*
 
 raw_features/*
 

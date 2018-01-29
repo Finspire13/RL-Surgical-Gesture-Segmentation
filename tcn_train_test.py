@@ -231,4 +231,5 @@ def cross_validate(model_params, train_params, feature_type, naming):
 
     result = np.array(result)
 
-    return [result[:,i].mean() for i in range(result.shape[1])]
+    #return [result[:,i].mean() for i in range(result.shape[1])]
+    return result

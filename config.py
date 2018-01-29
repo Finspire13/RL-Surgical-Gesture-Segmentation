@@ -17,7 +17,9 @@ tcn_feature_dir = './tcn_features'
 
 result_dir = './result'
 
-# Model parameters
+trpo_model_dir = './trpo_model'
+
+# TCN Model parameters
 encoder_params = {'input_size': None,  # To be defined later
                   'layer_type': ['TempConv', 'Bi-LSTM'][0],
                   'layer_sizes': [64, 96, 128], 
@@ -44,7 +46,7 @@ model_params = {'class_num': gesture_class_num,
 
 
 # Training parameters
-train_params = {'num_epochs': 300, #300
+train_params = {'num_epochs': 2, #300
                 'learning_rate': 0.00001,     
                 'batch_size': 1, 
                 'weight_decay': 0.0001} 
@@ -52,5 +54,27 @@ train_params = {'num_epochs': 300, #300
 # train_params = None
 
 
+# RL data parameters
+tcn_feature_num = 32
+
+# RL env parameters
+k_steps = [4, 16]
+glimpse = [4, 16]
+reward_alpha = 0.1
+
+# RL policy parameters
+pi_hidden_size = 64
+pi_hidden_layer = 1
+
+# RL training parameters
+trpo_num_timesteps = 1e3
+discount_factor = 0.9
+
+
+
+
+
 # Experiment Setup
 tcn_run_num = 3
+trpo_test_run_num = 2
+#trpo_train_run_num = 3
