@@ -1,0 +1,8 @@
+tcn_features/*
+tcn_log/*
+tcn_model/*
+result/*
+
+raw_features/*
+
+__pycache__
