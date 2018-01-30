@@ -58,8 +58,8 @@ train_params = {'num_epochs': 300,
 tcn_feature_num = 32
 
 # RL env parameters
-k_steps = [4, 16]
-glimpse = [4, 16]
+k_steps = [4, 21]
+glimpse = [4, 21]
 reward_alpha = 0.1
 
 # RL policy parameters
@@ -68,11 +68,11 @@ pi_hidden_layer = 1
 
 # RL training parameters
 trpo_num_timesteps = 5e5
-discount_factor = 0.8
+discount_factor = 0.9
 
 
 # Experiment Setup
-tcn_run_num = 2
-trpo_test_run_num = 10
-trpo_train_run_num = 3
+tcn_run_num = 1
+trpo_test_run_num = 50
+trpo_train_run_num = 5
 split_num = 8
