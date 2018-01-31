@@ -170,13 +170,12 @@ def cross_validate(model_params, train_params, feature_type, naming):
     result = []
 
     # Cross Validation
-    for split in cross_val_splits:
+    for split_idx, split in enumerate(cross_val_splits):
         feature_dir = os.path.join(raw_feature_dir, split['name'])
         test_trail_list = split['test']
         train_trail_list = split['train']
 
-        # To be improved
-        split_naming = naming + '_' + test_trail_list[0] 
+        split_naming = naming + '_split_{}'.format(split_idx+1)
 
         trained_model_file = utils.get_tcn_model_file(split_naming)
         log_dir = utils.get_tcn_log_sub_dir(split_naming)
@@ -231,5 +230,4 @@ def cross_validate(model_params, train_params, feature_type, naming):
 
     result = np.array(result)
 
-    #return [result[:,i].mean() for i in range(result.shape[1])]
     return result

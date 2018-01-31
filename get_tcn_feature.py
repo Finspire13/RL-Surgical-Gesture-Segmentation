@@ -48,16 +48,13 @@ def get_feature_by_split(model_params, feature_type, naming):
     # Get trail list
     cross_val_splits = utils.get_cross_val_splits()
 
-    split_idx = 1
-
     # Cross Validation
-    for split in cross_val_splits:
+    for split_idx, split in enumerate(cross_val_splits):
         feature_dir = os.path.join(raw_feature_dir, split['name'])
         test_trail_list = split['test']
         train_trail_list = split['train']
 
-        # To be improved
-        split_naming = naming + '_' + test_trail_list[0] 
+        split_naming = naming + '_split_{}'.format(split_idx+1)
 
         trained_model_file = utils.get_tcn_model_file(split_naming)
 
@@ -92,14 +89,13 @@ def get_feature_by_split(model_params, feature_type, naming):
         train_packed_data = extract_feature(model, train_dataset)
         test_packed_data = extract_feature(model, test_dataset)
 
-        train_data_file = 'train_{}_split_{}.npy'.format(naming, split_idx)
-        test_data_file = 'test_{}_split_{}.npy'.format(naming, split_idx)
+        train_data_file = 'tcn_feature_train_{}.npy'.format(split_naming)
+        test_data_file = 'tcn_feature_test_{}.npy'.format(split_naming)
 
         np.save(os.path.join(tcn_feature_dir, train_data_file), 
                                                 train_packed_data)
         np.save(os.path.join(tcn_feature_dir, test_data_file), 
                                                 test_packed_data)
 
-        split_idx += 1
 
 
