@@ -20,8 +20,8 @@ import pdb
 
 def test(feature_type, tcn_run_idx, split_idx, run_idx):
 
-    train_file = 'train_{}_run_{}_split_{}.npy'.format(feature_type, 
-                                                tcn_run_idx, split_idx)
+    train_file = 'tcn_feature_train_{}_run_{}_split_{}.npy'.format(
+                              feature_type, tcn_run_idx, split_idx)
     train_file = os.path.join(tcn_feature_dir, train_file)
     
     train_dataset = FeatureDataset(train_file)
@@ -42,8 +42,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
         logger.set_level(logger.DISABLED)
 
 
-    test_file = 'test_{}_run_{}_split_{}.npy'.format(feature_type, 
-                                            tcn_run_idx, split_idx)
+    test_file = 'tcn_feature_test_{}_run_{}_split_{}.npy'.format(
+                              feature_type, tcn_run_idx, split_idx)
     test_file = os.path.join(tcn_feature_dir, test_file)
 
     temp_dataset = FeatureDataset(test_file, test_index=0)
@@ -68,8 +68,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
 
 
     # Restore model
-    run_model_dir = 'model_{}_tcn_{}_split_{}_run_{}'.format(feature_type, 
-                                          tcn_run_idx, split_idx, run_idx)
+    run_model_dir = 'trpo_model_{}_tcn_{}_split_{}_run_{}'.format(
+                        feature_type, tcn_run_idx, split_idx, run_idx)
     run_model_dir = os.path.join(trpo_model_dir, run_model_dir)
     model_file = os.path.join(run_model_dir, 'model')
 
@@ -134,8 +134,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
         print('K1: ', episode_result.mean(0)[7])
         print('K2: ', episode_result.mean(0)[8])
 
-    result_file = 'result_{}_tcn_{}_split_{}_run_{}'.format(feature_type, 
-                                         tcn_run_idx, split_idx, run_idx)
+    result_file = 'trpo_result_{}_tcn_{}_split_{}_run_{}.npy'.format(
+                        feature_type, tcn_run_idx, split_idx, run_idx)
     result_file = os.path.join(result_dir, result_file)
 
     np.save(result_file, result)  #(5, 10, 9)

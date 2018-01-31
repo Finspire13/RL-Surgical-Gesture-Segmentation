@@ -69,7 +69,7 @@ def experiment_trpo(naming):
 
 
     # Get Averaged Results: TRPO
-    template = 'result_{}_tcn_{}_split_{}_run_{}.npy'
+    template = 'trpo_result_{}_tcn_{}_split_{}_run_{}.npy'
     for feature_type in ['sensor', 'visual']:
         trpo_result = np.zeros((tcn_run_num, split_num,
                             trpo_train_run_num, trpo_test_run_num, 9))
