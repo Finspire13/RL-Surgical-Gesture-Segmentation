@@ -20,8 +20,14 @@ import pdb
 
 def test(feature_type, tcn_run_idx, split_idx, run_idx):
 
-    train_file = 'tcn_feature_train_{}_run_{}_split_{}.npy'.format(
-                              feature_type, tcn_run_idx, split_idx)
+    feature_train_template = 'tcn_feature_train_{}_run_{}_split_{}.npy'
+    feature_test_template = 'tcn_feature_test_{}_run_{}_split_{}.npy'
+    run_model_dir_template = 'trpo_model_{}_tcn_{}_split_{}_run_{}'
+    graph_file_template = 'barcode_{}_tcn_{}_split_{}_run_{}_seq_{}_ep_{}'
+    result_file_template = 'trpo_result_{}_tcn_{}_split_{}_run_{}.npy'
+
+    train_file = feature_train_template.format(feature_type, 
+                                    tcn_run_idx, split_idx)
     train_file = os.path.join(tcn_feature_dir, train_file)
     
     train_dataset = FeatureDataset(train_file)
@@ -42,8 +48,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
         logger.set_level(logger.DISABLED)
 
 
-    test_file = 'tcn_feature_test_{}_run_{}_split_{}.npy'.format(
-                              feature_type, tcn_run_idx, split_idx)
+    test_file = feature_test_template.format(feature_type, 
+                                    tcn_run_idx, split_idx)
     test_file = os.path.join(tcn_feature_dir, test_file)
 
     temp_dataset = FeatureDataset(test_file, test_index=0)
@@ -68,8 +74,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
 
 
     # Restore model
-    run_model_dir = 'trpo_model_{}_tcn_{}_split_{}_run_{}'.format(
-                        feature_type, tcn_run_idx, split_idx, run_idx)
+    run_model_dir = run_model_dir_template.format(feature_type, 
+                                tcn_run_idx, split_idx, run_idx)
     run_model_dir = os.path.join(trpo_model_dir, run_model_dir)
     model_file = os.path.join(run_model_dir, 'model')
 
@@ -115,8 +121,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
             episode_result[episode,8] = (hist==2).sum() / hist.size
 
             # Plot
-            graph_file = 'barcode_{}_tcn_{}_split_{}_run_{}_seq_{}_ep_{}'.format(
-                feature_type, tcn_run_idx, split_idx, run_idx, i, episode)
+            graph_file = graph_file_template.format(feature_type, 
+                        tcn_run_idx, split_idx, run_idx, i, episode)
             graph_file = os.path.join(graph_dir, graph_file)
             utils.plot_barcode(gt=raw_env.label, pred=raw_env.result,
                                steps=raw_env.get_hist_step_sizes(),
@@ -134,8 +140,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
         print('K1: ', episode_result.mean(0)[7])
         print('K2: ', episode_result.mean(0)[8])
 
-    result_file = 'trpo_result_{}_tcn_{}_split_{}_run_{}.npy'.format(
-                        feature_type, tcn_run_idx, split_idx, run_idx)
+    result_file = result_file_template.format(feature_type, 
+                            tcn_run_idx, split_idx, run_idx)
     result_file = os.path.join(result_dir, result_file)
 
     np.save(result_file, result)  #(5, 10, 9)

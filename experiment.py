@@ -91,7 +91,7 @@ def experiment_trpo(naming):
 
 
 def main():
-    #experiment_tcn()
+    experiment_tcn()
     experiment_trpo('baseline')
 
 

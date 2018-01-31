@@ -23,8 +23,11 @@ import pdb
 
 def train(seed, feature_type, tcn_run_idx, split_idx, run_idx):
 
-    train_file = 'tcn_feature_train_{}_run_{}_split_{}.npy'.format(
-                              feature_type, tcn_run_idx, split_idx)
+    feature_train_template = 'tcn_feature_train_{}_run_{}_split_{}.npy'
+    run_model_dir_template = 'trpo_model_{}_tcn_{}_split_{}_run_{}'
+
+    train_file = feature_train_template.format(feature_type, 
+                                      tcn_run_idx, split_idx)
 
     train_file = os.path.join(tcn_feature_dir, train_file)
 
@@ -76,8 +79,8 @@ def train(seed, feature_type, tcn_run_idx, split_idx, run_idx):
 
 
     # Save Model
-    run_model_dir = 'trpo_model_{}_tcn_{}_split_{}_run_{}'.format(
-                        feature_type, tcn_run_idx, split_idx, run_idx)
+    run_model_dir = run_model_dir_template.format(feature_type, 
+                                tcn_run_idx, split_idx, run_idx)
     run_model_dir = os.path.join(trpo_model_dir, run_model_dir)
     if not os.path.exists(run_model_dir):
         os.makedirs(run_model_dir)
