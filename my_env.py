@@ -135,6 +135,22 @@ class MyEnv(gym.Env):
         entry.append(self.agent.current_state)
         self.full_act_hist.append(entry)
 
+    # For Plot and Debug
+    def get_hist_step_sizes(self):
+
+        steps = np.array(self.full_act_hist)
+        steps = steps[:,0].astype(int)
+
+        flat_steps = np.zeros_like(self.label)
+
+        running_idx = 0
+        for s in steps:
+            k = self.k_steps[s]
+            flat_steps[running_idx:running_idx+k] = s
+            running_idx += k 
+
+        return flat_steps
+
     def get_accuracy(self):
         return utils.get_accuracy(self.result, self.label)
 

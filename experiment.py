@@ -39,14 +39,30 @@ def experiment_trpo(naming):
         for split_idx in range(1, 1 + split_num):
             for run_idx in range(1, 1 + trpo_train_run_num):
 
+                # Train
                 processes = []
-                for feature_type in ['sensor', 'visual']:
+                #for feature_type in ['sensor', 'visual']:
+                for feature_type in ['sensor']:
                     formatted_args = cmd_args.format(
                         feature_type, tcn_run_idx, split_idx, run_idx)
                     full_cmd = trpo_train_cmd + formatted_args
-                    # full_cmd = 'echo ' + full_cmd + ';sleep 1' # test
                     processes.append(Popen(full_cmd, shell=True))
 
+                # Output on shell is messed up, see baseline logs instead
+                exitcodes = [p.wait() for p in processes]
+                if sum(exitcodes) != 0:
+                    raise Exception('Subprocess Error!')
+
+                # Test
+                processes = []
+                #for feature_type in ['sensor', 'visual']:
+                for feature_type in ['sensor']:
+                    formatted_args = cmd_args.format(
+                        feature_type, tcn_run_idx, split_idx, run_idx)
+                    full_cmd = trpo_test_cmd + formatted_args
+                    processes.append(Popen(full_cmd, shell=True))
+
+                # Output on shell is messed up, see baseline logs instead
                 exitcodes = [p.wait() for p in processes]
                 if sum(exitcodes) != 0:
                     raise Exception('Subprocess Error!')
@@ -75,7 +91,7 @@ def experiment_trpo(naming):
 
 
 def main():
-    experiment_tcn()
+    #experiment_tcn()
     experiment_trpo('baseline')
 
 

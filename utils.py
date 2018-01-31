@@ -225,7 +225,8 @@ def plot_trail(ls, pred=None, ys=None, show=True, save_file=None):
     if show:
         plt.show()
 
-def plot_barcode(gt=None, pred=None, show=True, save_file=None):
+def plot_barcode(gt=None, pred=None, steps=None,
+                 show=True, save_file=None):
     from config import gesture_class_num
 
     axprops = dict(xticks=[], yticks=[])
@@ -236,19 +237,25 @@ def plot_barcode(gt=None, pred=None, show=True, save_file=None):
 
     # a horizontal barcode
     if gt is not None:
-        ax1 = fig.add_axes([0, 0.55, 1, 0.2], **axprops)
+        ax1 = fig.add_axes([0, 0.7, 1, 0.2], **axprops)
         ax1.set_title('Ground Truth')
         ax1.imshow(gt.reshape((1, -1)), **barprops)
 
     if pred is not None:
-        ax2 = fig.add_axes([0, 0.25, 1, 0.2], **axprops)
+        ax2 = fig.add_axes([0, 0.4, 1, 0.2], **axprops)
         ax2.set_title('Predicted')
         ax2.imshow(pred.reshape((1, -1)), **barprops)
+
+    if steps is not None:
+        ax3 = fig.add_axes([0, 0.1, 1, 0.2], **axprops)
+        ax3.set_title('Step Size')
+        ax3.imshow(steps.reshape((1, -1)), **barprops)
 
     if save_file is not None:
         fig.savefig(save_file)
     if show:
         plt.show()
+    plt.close(fig)
 
 
 ################## Metrics ####################

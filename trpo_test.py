@@ -101,42 +101,26 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
             while not done:
                 obs, rew, done, _ = env.step(pi.act(True, obs)[0])
 
+            hist = np.array(raw_env.full_act_hist)
+            hist = hist[:,0].astype(int)
+            
             episode_result[episode,0] = raw_env.get_accuracy()
             episode_result[episode,1] = raw_env.get_edit_score()
             episode_result[episode,2] = raw_env.get_overlap_f1(0.1)
             episode_result[episode,3] = raw_env.get_overlap_f1(0.25)
             episode_result[episode,4] = raw_env.get_overlap_f1(0.5)
             episode_result[episode,5] = raw_env.get_overlap_f1(0.75)
-                
-            hist = np.array(raw_env.full_act_hist)
-            hist = hist[:,0].astype(int)
-
             episode_result[episode,6] = (hist==0).sum() / hist.size
             episode_result[episode,7] = (hist==1).sum() / hist.size
             episode_result[episode,8] = (hist==2).sum() / hist.size
 
-            #if raw_env.get_edit_score() < 70:
-            # pdb.set_trace()
-
-            # hist = np.array(raw_env.full_act_hist)
-
-            # hist = hist[:,2].astype(int)
-
-            # ls = raw_env.label
-            # pred = raw_env.result
-
-            # import matplotlib.pyplot as plt
-
-            # plt.plot(np.arange(len(ls)), ls, 'b')
-            # plt.plot(np.arange(len(pred)), pred, 'g')
-            # plt.plot(hist, np.ones_like(hist)*0, 'ro', markersize=1)
-            # plt.plot(hist, np.ones_like(hist)*1, 'ro', markersize=1)
-            # plt.plot(hist, np.ones_like(hist)*2, 'ro', markersize=1)
-            # plt.plot(hist, np.ones_like(hist)*3, 'ro', markersize=1)
-
-            # plt.show()
-
-            # utils.plot_barcode(gt=raw_env.label, pred=raw_env.result)
+            # Plot
+            graph_file = 'barcode_{}_tcn_{}_split_{}_run_{}_seq_{}_ep_{}'.format(
+                feature_type, tcn_run_idx, split_idx, run_idx, i, episode)
+            graph_file = os.path.join(graph_dir, graph_file)
+            utils.plot_barcode(gt=raw_env.label, pred=raw_env.result,
+                               steps=raw_env.get_hist_step_sizes(),
+                               show=False, save_file=graph_file)
 
         result[i,:,:] = episode_result
 

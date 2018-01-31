@@ -16,6 +16,7 @@ tcn_model_dir = './tcn_model'
 tcn_feature_dir = './tcn_features'
 
 result_dir = './result'
+graph_dir = './graph'
 
 trpo_model_dir = './trpo_model'
 
@@ -67,12 +68,12 @@ pi_hidden_size = 64
 pi_hidden_layer = 1
 
 # RL training parameters
-trpo_num_timesteps = 5e5
+trpo_num_timesteps = 1e3 #5e5
 discount_factor = 0.9
 
 
 # Experiment Setup
 tcn_run_num = 1
-trpo_test_run_num = 50
-trpo_train_run_num = 5
+trpo_test_run_num = 1
+trpo_train_run_num = 1
 split_num = 8
