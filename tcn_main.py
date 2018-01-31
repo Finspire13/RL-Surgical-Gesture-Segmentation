@@ -7,7 +7,7 @@ import os
 import numpy as np
 from tcn_train_test import cross_validate
 from get_tcn_feature import get_feature_by_split
-from config import *
+from config import tcn_params, tcn_run_num, result_dir
 
 import pdb
 
@@ -27,16 +27,19 @@ def main():
         elif feature_type == 'sensor':
             feature_size = 14
 
-        model_params['encoder_params']['input_size'] = feature_size
+        tcn_params.model_params['encoder_params']['input_size'] = feature_size
 
         for run_idx in range(tcn_run_num):
 
             naming = '{}_run_{}'.format(feature_type, run_idx + 1)
 
-            run_result = cross_validate(model_params, train_params,
-                                        feature_type, naming)  #8x6
+            run_result = cross_validate(tcn_params.model_params, 
+                                        tcn_params.train_params,
+                                        feature_type, 
+                                        naming)  #8x6
 
-            get_feature_by_split(model_params, feature_type, naming)
+            get_feature_by_split(tcn_params.model_params, 
+                                 feature_type, naming)
 
             result_file = os.path.join(result_dir, 
                             'tcn_result_{}.npy'.format(naming))

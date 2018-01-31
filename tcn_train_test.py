@@ -14,7 +14,7 @@ from logger import Logger
 import utils
 import pdb
 
-from config import *
+from config import raw_feature_dir, sample_rate
 
 
 def train_model(model, 
@@ -45,7 +45,6 @@ def train_model(model,
 
     optimizer = torch.optim.Adam(model.parameters(),lr=learning_rate,
                                             weight_decay=weight_decay)
-
 
     step = 1
     for epoch in range(num_epochs):

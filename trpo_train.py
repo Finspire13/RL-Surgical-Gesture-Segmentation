@@ -15,7 +15,7 @@ import tensorflow as tf
 
 from my_dataset import FeatureDataset
 from my_env import MyEnv
-from config import *
+from config import tcn_feature_dir, rl_params, trpo_model_dir
 from random import randint
 import os
 import utils
@@ -40,7 +40,6 @@ def train(seed, feature_type, tcn_run_idx, split_idx, run_idx):
                          'durations':durations}
 
 
-
     import baselines.common.tf_util as U
     sess = U.single_threaded_session()
     sess.__enter__()
@@ -53,16 +52,17 @@ def train(seed, feature_type, tcn_run_idx, split_idx, run_idx):
 
     env = MyEnv(dataset,
                 statistical_model,
-                k_steps=k_steps,
-                glimpse=glimpse,
-                reward_alpha=reward_alpha)
+                k_steps=rl_params.k_steps,
+                glimpse=rl_params.glimpse,
+                reward_alpha=rl_params.reward_alpha,
+                mode=rl_params.env_mode)
 
     def policy_fn(name, ob_space, ac_space):
         return MlpPolicy(name=name, 
                          ob_space=env.observation_space, 
                          ac_space=env.action_space,
-                         hid_size=pi_hidden_size, 
-                         num_hid_layers=pi_hidden_layer)
+                         hid_size=rl_params.pi_hidden_size, 
+                         num_hid_layers=rl_params.pi_hidden_layer)
 
     env = bench.Monitor(env, logger.get_dir() and
         osp.join(logger.get_dir(), str(rank)))
@@ -72,8 +72,8 @@ def train(seed, feature_type, tcn_run_idx, split_idx, run_idx):
     trpo_mpi.learn(env, policy_fn, 
                    timesteps_per_batch=1024, max_kl=0.01, 
                    cg_iters=10, cg_damping=0.1,
-                   max_timesteps=trpo_num_timesteps, 
-                   gamma=discount_factor, 
+                   max_timesteps=rl_params.trpo_num_timesteps, 
+                   gamma=rl_params.discount_factor, 
                    lam=0.98, vf_iters=5, vf_stepsize=1e-3)
     env.close()
 
