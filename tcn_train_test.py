@@ -14,7 +14,7 @@ from logger import Logger
 import utils
 import pdb
 
-from config import raw_feature_dir, sample_rate
+from config import raw_feature_dir, sample_rate, gesture_class_num
 
 
 def train_model(model, 

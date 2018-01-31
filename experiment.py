@@ -1,8 +1,10 @@
 import os
 import shutil
 import numpy as np 
+import json
 from subprocess import Popen
-from config import *
+from config import (result_dir, trpo_model_dir, graph_dir, split_num,
+                    tcn_run_num, trpo_test_run_num, trpo_train_run_num)
 
 import pdb
 
@@ -113,7 +115,33 @@ def experiment_trpo(naming):
 
 def main():
     #experiment_tcn()
-    experiment_trpo('baseline')
+
+    # pdb.set_trace()
+
+    from config import all_params
+
+    all_params['rl_params']['env_mode'] = 'full'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('full')
+
+
+    all_params['rl_params']['env_mode'] = 'no_tcn'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('no_tcn')
+
+
+    all_params['rl_params']['env_mode'] = 'no_future'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('no_future')
+
+
+    all_params['rl_params']['env_mode'] = 'no_hint'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('no_hint')
 
 
 if __name__ == '__main__':

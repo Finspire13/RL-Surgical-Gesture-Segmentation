@@ -11,8 +11,8 @@ import tensorflow as tf
 
 from my_dataset import FeatureDataset
 from my_env import MyEnv
-from config import (tcn_feature_dir, rl_params, trpo_model_dir, 
-                    trpo_test_run_num, graph_dir, result_dir)
+from config import (tcn_feature_dir, rl_params, trpo_model_dir, result_dir,
+                    trpo_test_run_num, graph_dir, gesture_class_num)
 import os
 import utils
 import numpy as np
@@ -56,17 +56,19 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
     temp_dataset = FeatureDataset(test_file, test_index=0)
     temp_raw_env = MyEnv(temp_dataset,
                     statistical_model,
-                    k_steps=rl_params.k_steps,
-                    glimpse=rl_params.glimpse,
-                    reward_alpha=rl_params.reward_alpha,
-                    mode=rl_params.env_mode)
+                    class_num=gesture_class_num,
+                    feature_num=rl_params['tcn_feature_num'],
+                    k_steps=rl_params['k_steps'],
+                    glimpse=rl_params['glimpse'],
+                    reward_alpha=rl_params['reward_alpha'],
+                    mode=rl_params['env_mode'])
 
     def policy_fn(name, ob_space, ac_space):
         return MlpPolicy(name=name, 
                          ob_space=temp_raw_env.observation_space, 
                          ac_space=temp_raw_env.action_space,
-                         hid_size=rl_params.pi_hidden_size, 
-                         num_hid_layers=rl_params.pi_hidden_layer)
+                         hid_size=rl_params['pi_hidden_size'], 
+                         num_hid_layers=rl_params['pi_hidden_layer'])
 
     temp_env = bench.Monitor(temp_raw_env, logger.get_dir() and
                         osp.join(logger.get_dir(), str(rank)))
@@ -94,10 +96,12 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
         test_dataset = FeatureDataset(test_file, test_index=i)
         raw_env = MyEnv(test_dataset,
                         statistical_model,
-                        k_steps=rl_params.k_steps,
-                        glimpse=rl_params.glimpse,
-                        reward_alpha=rl_params.reward_alpha,
-                        mode=rl_params.env_mode)
+                        class_num=gesture_class_num,
+                        feature_num=rl_params['tcn_feature_num'],
+                        k_steps=rl_params['k_steps'],
+                        glimpse=rl_params['glimpse'],
+                        reward_alpha=rl_params['reward_alpha'],
+                        mode=rl_params['env_mode'])
 
         env = bench.Monitor(raw_env, logger.get_dir() and
                             osp.join(logger.get_dir(), str(rank)))

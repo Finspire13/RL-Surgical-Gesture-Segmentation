@@ -4,8 +4,6 @@ from __future__ import print_function
 import utils
 from agent import Agent
 
-from config import gesture_class_num, tcn_feature_num
-
 import gym
 from gym import spaces
 import numpy as np
@@ -18,30 +16,41 @@ class MyEnv(gym.Env):
     def __init__(self,
                  dataset, 
                  statistical_model,
+                 class_num,
+                 feature_num,
                  k_steps,
                  glimpse,
-                 reward_alpha):  # glimpse should > 0 
+                 reward_alpha,
+                 mode):  # glimpse should > 0 
 
         self.dataset = dataset
         self.k_steps = k_steps
         self.glimpse = glimpse
         self.reward_alpha = reward_alpha
 
-        self.feature_num = tcn_feature_num
+        self.class_num = class_num
+        self.feature_num = feature_num
 
         self.agent = Agent(name='CleverChang',
-                           state_num=gesture_class_num,
+                           state_num=self.class_num,
                            **statistical_model)
 
-
-        self.action_num = len(self.k_steps) * gesture_class_num
-
+        self.action_num = len(self.k_steps) * self.class_num
         self.action_space = spaces.Discrete(self.action_num)
 
-        self.observation_num = self.feature_num * (len(self.glimpse)+1) + \
-                               2 * gesture_class_num
-        
-        # self.observation_num = self.feature_num * (len(self.glimpse)+1) 
+        self.mode = mode
+
+        if self.mode == 'full':
+            self.observation_num = self.feature_num * (len(self.glimpse)+1) + \
+                                                        2 * self.class_num
+        elif self.mode == 'no_tcn':
+            self.observation_num = 2 * self.class_num
+        elif self.mode == 'no_future':
+            self.observation_num = self.feature_num + 2 * self.class_num
+        elif self.mode == 'no_hint':
+            self.observation_num = self.feature_num * (len(self.glimpse)+1)
+        else:
+            raise Exception('Invalid Env Mode!')
 
         bounds = np.ones(self.observation_num) * np.inf             # To be improved
         self.observation_space = spaces.Box(-bounds, bounds)
@@ -73,29 +82,55 @@ class MyEnv(gym.Env):
         if self.position >= self.episode_len:
             raise Exception('Agent out of environment')
 
-        state = [self.feature[self.position]]
+        state = []
 
-        for g in self.glimpse:
-            if self.position + g < self.episode_len:
-                state.append(self.feature[self.position + g])
-            else:
-                state.append(np.zeros(self.feature_num))
-        
-        state.append(self.agent.get_state_vector())
-        state.append(self.agent.get_hints_vector())
+        if self.mode == 'full':
+
+            state.append(self.feature[self.position])
+            for g in self.glimpse:
+                if self.position + g < self.episode_len:
+                    state.append(self.feature[self.position + g])
+                else:
+                    state.append(np.zeros(self.feature_num))
+                    
+            state.append(self.agent.get_state_vector())
+            state.append(self.agent.get_hints_vector())
+
+        elif self.mode == 'no_tcn':
+
+            state.append(self.agent.get_state_vector())
+            state.append(self.agent.get_hints_vector())
+
+        elif self.mode == 'no_future':
+
+            state.append(self.feature[self.position])
+
+            state.append(self.agent.get_state_vector())
+            state.append(self.agent.get_hints_vector())
+
+        elif self.mode == 'no_hint':
+
+            state.append(self.feature[self.position])
+            for g in self.glimpse:
+                if self.position + g < self.episode_len:
+                    state.append(self.feature[self.position + g])
+                else:
+                    state.append(np.zeros(self.feature_num))
+
+        else:
+            raise Exception('Invalid Env Mode!')
 
         state = np.concatenate(state)
-
         return state
 
 
     def _step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid"%(action, type(action))
 
-        act_k = action // gesture_class_num
-        act_opt = action % gesture_class_num
+        act_k = action // self.class_num
+        act_opt = action % self.class_num
 
-        if act_opt not in [i for i in range(gesture_class_num)]:
+        if act_opt not in [i for i in range(self.class_num)]:
             raise Exception('Invalid act_opt!')
 
         k_step = self.k_steps[act_k]
@@ -125,8 +160,8 @@ class MyEnv(gym.Env):
         return self.state, reward, done, {}
 
     def _update_full_act_hist(self, action, reward):
-        act_k = action // gesture_class_num
-        act_opt = action % gesture_class_num
+        act_k = action // self.class_num
+        act_opt = action % self.class_num
         entry = []
         entry.append(act_k)
         entry.append(act_opt)
@@ -159,5 +194,5 @@ class MyEnv(gym.Env):
 
     def get_overlap_f1(self, overlap):
         return utils.get_overlap_f1_colin(self.result, self.label,
-                                          n_classes=gesture_class_num,
+                                          n_classes=self.class_num,
                                           overlap=overlap)

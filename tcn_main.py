@@ -27,18 +27,18 @@ def main():
         elif feature_type == 'sensor':
             feature_size = 14
 
-        tcn_params.model_params['encoder_params']['input_size'] = feature_size
+        tcn_params['model_params']['encoder_params']['input_size'] = feature_size
 
         for run_idx in range(tcn_run_num):
 
             naming = '{}_run_{}'.format(feature_type, run_idx + 1)
 
-            run_result = cross_validate(tcn_params.model_params, 
-                                        tcn_params.train_params,
+            run_result = cross_validate(tcn_params['model_params'], 
+                                        tcn_params['train_params'],
                                         feature_type, 
                                         naming)  #8x6
 
-            get_feature_by_split(tcn_params.model_params, 
+            get_feature_by_split(tcn_params['model_params'], 
                                  feature_type, naming)
 
             result_file = os.path.join(result_dir, 

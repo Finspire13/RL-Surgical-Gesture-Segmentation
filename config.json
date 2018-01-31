@@ -1,81 +1,69 @@
-{  
-   "gesture_class_num":10,
-   "sample_rate":1,
-
-
-   "raw_feature_dir":"./raw_features",
-   "split_info_dir":"./splits",
-   "tcn_log_dir":"./tcn_log",
-   "tcn_model_dir":"./tcn_model",
-   "tcn_feature_dir":"./tcn_features",
-   "result_dir":"./result",
-   "graph_dir":"./graph",
-   "trpo_model_dir":"./trpo_model",
-
-
-   "tcn_params":{  
-      "model_params":{  
-         "class_num":10,
-         "fc_size":32,
-         "encoder_params":{  
-            "input_size":null,
-            "layer_type":"TempConv",
-            "layer_sizes":[  
-               64,
-               96,
-               128
-            ],
-            "kernel_size":51,
-            "norm_type":"Channel"
-         },
-         "mid_lstm_params":{  
-            "input_size":128,
-            "hidden_size":64,
-            "layer_num":1
-         },
-         "decoder_params":{  
-            "input_size":128,
-            "layer_type":"TempConv",
-            "layer_sizes":[  
-               96,
-               64,
-               64
-            ],
-            "transposed_conv":true,
-            "kernel_size":51,
-            "norm_type":"Channel"
-         }
+{
+  "trpo_model_dir": "./trpo_model",
+  "trpo_test_run_num": 3,
+  "raw_feature_dir": "./raw_features",
+  "trpo_train_run_num": 2,
+  "sample_rate": 1,
+  "result_dir": "./result",
+  "tcn_params": {
+    "train_params": {
+      "learning_rate": 1e-05,
+      "batch_size": 1,
+      "num_epochs": 2,
+      "weight_decay": 0.0001
+    },
+    "model_params": {
+      "encoder_params": {
+        "norm_type": "Channel",
+        "input_size": null,
+        "layer_type": "TempConv",
+        "kernel_size": 51,
+        "layer_sizes": [
+          64,
+          96,
+          128
+        ]
       },
-      "train_params":{  
-         "num_epochs":2,
-         "learning_rate":0.00001,
-         "batch_size":1,
-         "weight_decay":0.0001
-      }
-   },
-
-
-   "rl_params":{  
-      "tcn_feature_num":32,
-      "k_steps":[  
-         4,
-         21
-      ],
-      "glimpse":[  
-         4,
-         21
-      ],
-      "reward_alpha":0.1,
-      "env_mode":"full",
-      "pi_hidden_size":64,
-      "pi_hidden_layer":1,
-      "trpo_num_timesteps":1e3,
-      "discount_factor":0.9
-   },
-
-   
-   "tcn_run_num":1,
-   "trpo_test_run_num":3,
-   "trpo_train_run_num":2,
-   "split_num ":8
+      "decoder_params": {
+        "transposed_conv": true,
+        "norm_type": "Channel",
+        "layer_type": "TempConv",
+        "input_size": 128,
+        "kernel_size": 51,
+        "layer_sizes": [
+          96,
+          64,
+          64
+        ]
+      },
+      "mid_lstm_params": null,
+      "class_num": 10,
+      "fc_size": 32
+    }
+  },
+  "tcn_log_dir": "./tcn_log",
+  "split_num": 8,
+  "tcn_model_dir": "./tcn_model",
+  "gesture_class_num": 10,
+  "tcn_feature_dir": "./tcn_features",
+  "tcn_run_num": 1,
+  "split_info_dir": "./splits",
+  "graph_dir": "./graph",
+  "rl_params": {
+    "k_steps": [
+      4,
+      21
+    ],
+    "glimpse": [
+      4,
+      21
+    ],
+    "pi_hidden_size": 64,
+    "tcn_feature_num": 32,
+    "trpo_num_timesteps": 1000.0,
+    "env_mode": "full",
+    "reward_alpha": 0.1,
+    "discount_factor": 0.9,
+    "pi_hidden_layer": 1
+  }
 }
