@@ -1,4 +1,5 @@
 import os
+import shutil
 import numpy as np 
 from subprocess import Popen
 from config import *
@@ -41,8 +42,8 @@ def experiment_trpo(naming):
 
                 # Train
                 processes = []
-                #for feature_type in ['sensor', 'visual']:
-                for feature_type in ['sensor']:
+                for feature_type in ['sensor', 'visual']:
+                #for feature_type in ['sensor']:
                     formatted_args = cmd_args.format(
                         feature_type, tcn_run_idx, split_idx, run_idx)
                     full_cmd = trpo_train_cmd + formatted_args
@@ -55,8 +56,8 @@ def experiment_trpo(naming):
 
                 # Test
                 processes = []
-                #for feature_type in ['sensor', 'visual']:
-                for feature_type in ['sensor']:
+                for feature_type in ['sensor', 'visual']:
+                #for feature_type in ['sensor']:
                     formatted_args = cmd_args.format(
                         feature_type, tcn_run_idx, split_idx, run_idx)
                     full_cmd = trpo_test_cmd + formatted_args
@@ -89,9 +90,29 @@ def experiment_trpo(naming):
         #np.save(trpo_result_file, trpo_result.mean(0).mean(0).mean(0).mean(0))
         np.save(trpo_result_file, trpo_result)
 
+    # Move all models into subfolder
+    trpo_model_sub_dir = os.path.join(trpo_model_dir, naming)
+    if not os.path.exists(trpo_model_sub_dir):
+        os.makedirs(trpo_model_sub_dir)
+
+    for item in os.listdir(trpo_model_dir):
+        if item.startswith('trpo_model'):
+            item = os.path.join(trpo_model_dir, item)
+            shutil.move(item, trpo_model_sub_dir)
+
+    # Move all graphs into subfolder
+    graph_sub_dir = os.path.join(graph_dir, naming)
+    if not os.path.exists(graph_sub_dir):
+        os.makedirs(graph_sub_dir)
+
+    for item in os.listdir(graph_dir):
+        if item.startswith('barcode'):
+            item = os.path.join(graph_dir, item)
+            shutil.move(item, graph_sub_dir)
+
 
 def main():
-    experiment_tcn()
+    #experiment_tcn()
     experiment_trpo('baseline')
 
 

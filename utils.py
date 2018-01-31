@@ -87,20 +87,20 @@ def clear_dir(dir):
 # To be improved
 def set_up_dirs():
     from config import (result_dir, tcn_log_dir, tcn_model_dir, 
-                        tcn_feature_dir, trpo_model_dir)
+                        tcn_feature_dir, trpo_model_dir, graph_dir)
 
     for i in [result_dir, tcn_log_dir, tcn_model_dir, 
-              tcn_feature_dir, trpo_model_dir]:
+              tcn_feature_dir, trpo_model_dir, graph_dir]:
         if not os.path.exists(i):
             os.makedirs(i)
 
 # To be improved
 def clean_up():
     from config import (result_dir, tcn_log_dir, tcn_model_dir, 
-                        tcn_feature_dir, trpo_model_dir)
+                        tcn_feature_dir, trpo_model_dir, graph_dir)
 
     for i in [result_dir, tcn_log_dir, tcn_model_dir, 
-              tcn_feature_dir, trpo_model_dir]:
+              tcn_feature_dir, trpo_model_dir, graph_dir]:
         clear_dir(i)    
 
 
