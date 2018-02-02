@@ -1,69 +1,69 @@
 {
-  "trpo_model_dir": "./trpo_model",
-  "trpo_test_run_num": 3,
-  "raw_feature_dir": "./raw_features",
-  "trpo_train_run_num": 2,
-  "sample_rate": 1,
+  "trpo_test_run_num": 10,
+  "tcn_log_dir": "./tcn_log",
   "result_dir": "./result",
+  "raw_feature_dir": "./raw_features",
+  "trpo_train_run_num": 5,
+  "split_num": 8,
   "tcn_params": {
     "train_params": {
       "learning_rate": 1e-05,
       "batch_size": 1,
-      "num_epochs": 2,
+      "num_epochs": 300,
       "weight_decay": 0.0001
     },
     "model_params": {
+      "class_num": 10,
+      "fc_size": 32,
       "encoder_params": {
         "norm_type": "Channel",
         "input_size": null,
-        "layer_type": "TempConv",
-        "kernel_size": 51,
         "layer_sizes": [
           64,
           96,
           128
-        ]
-      },
-      "decoder_params": {
-        "transposed_conv": true,
-        "norm_type": "Channel",
-        "layer_type": "TempConv",
-        "input_size": 128,
+        ],
         "kernel_size": 51,
+        "layer_type": "TempConv"
+      },
+      "mid_lstm_params": null,
+      "decoder_params": {
+        "input_size": 128,
+        "transposed_conv": true,
         "layer_sizes": [
           96,
           64,
           64
-        ]
-      },
-      "mid_lstm_params": null,
-      "class_num": 10,
-      "fc_size": 32
+        ],
+        "kernel_size": 51,
+        "norm_type": "Channel",
+        "layer_type": "TempConv"
+      }
     }
   },
-  "tcn_log_dir": "./tcn_log",
-  "split_num": 8,
-  "tcn_model_dir": "./tcn_model",
-  "gesture_class_num": 10,
-  "tcn_feature_dir": "./tcn_features",
-  "tcn_run_num": 1,
   "split_info_dir": "./splits",
   "graph_dir": "./graph",
+  "sample_rate": 1,
+  "gesture_class_num": 10,
   "rl_params": {
-    "k_steps": [
-      4,
-      21
-    ],
+    "pi_hidden_layer": 1,
     "glimpse": [
       4,
       21
     ],
-    "pi_hidden_size": 64,
-    "tcn_feature_num": 32,
-    "trpo_num_timesteps": 1000.0,
-    "env_mode": "full",
-    "reward_alpha": 0.1,
+    "trpo_num_timesteps": 500000.0,
+    "env_mode": "no_hint",
     "discount_factor": 0.9,
-    "pi_hidden_layer": 1
-  }
+    "tcn_feature_num": 32,
+    "pi_hidden_size": 64,
+    "reward_alpha": 0.1,
+    "k_steps": [
+      4,
+      21
+    ]
+  },
+  "tcn_run_num": 1,
+  "tcn_model_dir": "./tcn_model",
+  "trpo_model_dir": "./trpo_model",
+  "tcn_feature_dir": "./tcn_features"
 }

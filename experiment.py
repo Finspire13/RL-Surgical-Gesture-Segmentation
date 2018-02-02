@@ -114,9 +114,8 @@ def experiment_trpo(naming):
 
 
 def main():
-    #experiment_tcn()
 
-    # pdb.set_trace()
+    # experiment_tcn()
 
     from config import all_params
 
