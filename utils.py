@@ -271,6 +271,7 @@ def get_result_string(result):
     return result_string
 
 
+# levenstein
 def get_edit_score(out, gt):
     import editdistance
 
