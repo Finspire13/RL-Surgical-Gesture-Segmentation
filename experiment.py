@@ -119,28 +119,40 @@ def main():
 
     from config import all_params
 
-    all_params['rl_params']['env_mode'] = 'full'
-    with open('config.json', 'w') as f:
-        json.dump(all_params, f, indent=2)
-    experiment_trpo('full')
+    # all_params['rl_params']['env_mode'] = 'full'
+    # with open('config.json', 'w') as f:
+    #     json.dump(all_params, f, indent=2)
+    # experiment_trpo('full')
 
 
-    all_params['rl_params']['env_mode'] = 'no_tcn'
-    with open('config.json', 'w') as f:
-        json.dump(all_params, f, indent=2)
-    experiment_trpo('no_tcn')
+    # all_params['rl_params']['env_mode'] = 'no_tcn'
+    # with open('config.json', 'w') as f:
+    #     json.dump(all_params, f, indent=2)
+    # experiment_trpo('no_tcn')
 
 
-    all_params['rl_params']['env_mode'] = 'no_future'
-    with open('config.json', 'w') as f:
-        json.dump(all_params, f, indent=2)
-    experiment_trpo('no_future')
+    # all_params['rl_params']['env_mode'] = 'no_future'
+    # with open('config.json', 'w') as f:
+    #     json.dump(all_params, f, indent=2)
+    # experiment_trpo('no_future')
 
 
-    all_params['rl_params']['env_mode'] = 'no_hint'
-    with open('config.json', 'w') as f:
-        json.dump(all_params, f, indent=2)
-    experiment_trpo('no_hint')
+    # all_params['rl_params']['env_mode'] = 'no_hint'
+    # with open('config.json', 'w') as f:
+    #     json.dump(all_params, f, indent=2)
+    # experiment_trpo('no_hint')
+
+
+    for k in [1, 2, 4, 8]:
+
+        all_params['rl_params']['k_steps'] = [k]
+        all_params['rl_params']['glimpse'] = [k]
+        all_params['rl_params']['reward_alpha'] = 0
+
+        with open('config.json', 'w') as f:
+            json.dump(all_params, f, indent=2)
+
+        experiment_trpo(str(k))
 
 
 if __name__ == '__main__':
