@@ -114,7 +114,8 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
                 obs, rew, done, _ = env.step(pi.act(True, obs)[0])
 
             hist = np.array(raw_env.full_act_hist)
-            hist = hist[:,0].astype(int)
+            step_opt = hist[:,0].astype(int)
+            step_nums = step_opt.size
             
             episode_result[episode,0] = raw_env.get_accuracy()
             episode_result[episode,1] = raw_env.get_edit_score()
@@ -122,16 +123,18 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
             episode_result[episode,3] = raw_env.get_overlap_f1(0.25)
             episode_result[episode,4] = raw_env.get_overlap_f1(0.5)
             episode_result[episode,5] = raw_env.get_overlap_f1(0.75)
-            episode_result[episode,6] = (hist==0).sum() / hist.size
-            episode_result[episode,7] = (hist==1).sum() / hist.size
-            episode_result[episode,8] = (hist==2).sum() / hist.size
+            episode_result[episode,6] = (step_opt==0).sum() / step_nums
+            episode_result[episode,7] = (step_opt==1).sum() / step_nums
+            episode_result[episode,8] = (step_opt==2).sum() / step_nums
 
             # Plot
             graph_file = graph_file_template.format(feature_type, 
                         tcn_run_idx, split_idx, run_idx, i, episode)
             graph_file = os.path.join(graph_dir, graph_file)
+
+            visited_pos = hist[:,2].astype(int)
             utils.plot_barcode(gt=raw_env.label, pred=raw_env.result,
-                               steps=raw_env.get_hist_step_sizes(),
+                               visited_pos=visited_pos,
                                show=False, save_file=graph_file)
 
         result[i,:,:] = episode_result

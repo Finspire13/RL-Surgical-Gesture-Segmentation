@@ -225,34 +225,35 @@ def plot_trail(ls, pred=None, ys=None, show=True, save_file=None):
     if show:
         plt.show()
 
-def plot_barcode(gt=None, pred=None, steps=None,
+def plot_barcode(gt=None, pred=None, visited_pos=None,
                  show=True, save_file=None):
     from config import gesture_class_num
 
-    axprops = dict(xticks=[], yticks=[])
+    axprops = dict(xticks=[], yticks=[], frameon=False)
     barprops = dict(aspect='auto', cmap=plt.cm.tab10, 
                 interpolation='nearest', vmin=0, vmax=gesture_class_num-1)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(18, 4))
 
     # a horizontal barcode
     if gt is not None:
-        ax1 = fig.add_axes([0, 0.7, 1, 0.2], **axprops)
+        ax1 = fig.add_axes([0, 0.65, 1, 0.2], **axprops)
         ax1.set_title('Ground Truth')
         ax1.imshow(gt.reshape((1, -1)), **barprops)
 
     if pred is not None:
-        ax2 = fig.add_axes([0, 0.4, 1, 0.2], **axprops)
+        ax2 = fig.add_axes([0, 0.35, 1, 0.2], **axprops)
         ax2.set_title('Predicted')
         ax2.imshow(pred.reshape((1, -1)), **barprops)
 
-    if steps is not None:
-        ax3 = fig.add_axes([0, 0.1, 1, 0.2], **axprops)
-        ax3.set_title('Step Size')
-        ax3.imshow(steps.reshape((1, -1)), **barprops)
+    if visited_pos is not None:
+        ax3 = fig.add_axes([0, 0.15, 1, 0.1], **axprops)
+        ax3.set_title('Steps of Agent')
+        ax3.set_xlim(visited_pos.min(), visited_pos.max())
+        ax3.plot(visited_pos, np.ones_like(visited_pos), 'ro', markersize=1)
 
     if save_file is not None:
-        fig.savefig(save_file)
+        fig.savefig(save_file, dpi=400)
     if show:
         plt.show()
     plt.close(fig)
