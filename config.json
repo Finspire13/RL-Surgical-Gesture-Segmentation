@@ -74,7 +74,7 @@
    },
 
    
-   "tcn_run_num":1,
+   "tcn_run_num":5,
    "trpo_test_run_num":10,
    "trpo_train_run_num":3,
    "split_num":8

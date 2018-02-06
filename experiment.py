@@ -5,7 +5,7 @@ import json
 from subprocess import Popen
 from config import (result_dir, trpo_model_dir, graph_dir, split_num,
                     tcn_run_num, trpo_test_run_num, trpo_train_run_num)
-
+import utils
 import pdb
 
 # This is an awkward solution since I dont know how to run multiple tf sessions..
@@ -115,36 +115,43 @@ def experiment_trpo(naming):
 
 def main():
 
+    #utils.set_up_dirs()
+    #utils.clean_up()
+
+    # Set seed
+    #utils.set_global_seeds(777, True)
+
     # experiment_tcn()
 
     from config import all_params
 
-    # all_params['rl_params']['env_mode'] = 'full'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('full')
+    all_params['rl_params']['env_mode'] = 'full'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('full')
 
 
-    # all_params['rl_params']['env_mode'] = 'no_tcn'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('no_tcn')
+    all_params['rl_params']['env_mode'] = 'no_tcn'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('no_tcn')
 
 
-    # all_params['rl_params']['env_mode'] = 'no_future'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('no_future')
+    all_params['rl_params']['env_mode'] = 'no_future'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('no_future')
 
 
-    # all_params['rl_params']['env_mode'] = 'no_hint'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('no_hint')
+    all_params['rl_params']['env_mode'] = 'no_hint'
+    with open('config.json', 'w') as f:
+        json.dump(all_params, f, indent=2)
+    experiment_trpo('no_hint')
 
 
-    for k in [1, 2, 4, 8]:
+    for k in [1, 2, 4, 8, 16, 32]:
 
+        all_params['rl_params']['env_mode'] = 'full'
         all_params['rl_params']['k_steps'] = [k]
         all_params['rl_params']['glimpse'] = [k]
         all_params['rl_params']['reward_alpha'] = 0

@@ -13,12 +13,6 @@ import pdb
 
 def main():
 
-    utils.set_up_dirs()
-    utils.clean_up()
-
-    # Set seed
-    #utils.set_global_seeds(777, True)
-
     for feature_idx in range(2):
 
         feature_type = ['sensor', 'visual'][feature_idx]
