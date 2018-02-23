@@ -249,7 +249,7 @@ def plot_barcode(gt=None, pred=None, visited_pos=None,
     if visited_pos is not None:
         ax3 = fig.add_axes([0, 0.15, 1, 0.1], **axprops)
         ax3.set_title('Steps of Agent')
-        ax3.set_xlim(visited_pos.min(), visited_pos.max())
+        ax3.set_xlim(0, len(gt))
         ax3.plot(visited_pos, np.ones_like(visited_pos), 'ro', markersize=1)
 
     if save_file is not None:
