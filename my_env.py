@@ -58,7 +58,7 @@ class MyEnv(gym.Env):
         self.state = None
 
 
-    def _reset(self):
+    def reset(self):
         #data = self.dataset[random.randrange(len(self.dataset))]
         data = random.choice(self.dataset)
 
@@ -124,7 +124,7 @@ class MyEnv(gym.Env):
         return state
 
 
-    def _step(self, action):
+    def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid"%(action, type(action))
 
         act_k = action // self.class_num
@@ -169,6 +169,16 @@ class MyEnv(gym.Env):
         entry.append(reward)
         entry.append(self.agent.current_state)
         self.full_act_hist.append(entry)
+
+    # def seed(self, seed=None):
+    #     utils.set_global_seeds(seed)
+    #     return [seed]
+
+    # def render(self):
+    #     pass
+
+    # def close(self):
+    #     pass
 
     def get_accuracy(self):
         return utils.get_accuracy(self.result, self.label)

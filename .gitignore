@@ -6,5 +6,6 @@ trpo_model/*
 graph/*
 
 raw_features/*
+splits/*
 
 __pycache__

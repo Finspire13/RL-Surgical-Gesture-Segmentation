@@ -15,10 +15,11 @@ import pdb
 
 def set_global_seeds(seed, use_cudnn=True):
     torch.backends.cudnn.enabled = use_cudnn   # Too slow
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    np.random.seed(seed)
-    random.seed(seed)
+    if seed:
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
 
 
 ################### Trail List ######################
