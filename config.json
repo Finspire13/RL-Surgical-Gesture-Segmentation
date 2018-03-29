@@ -1,6 +1,19 @@
 {  
-   "gesture_class_num":10,
-   "sample_rate":1,
+    "dataset_name": "JIGSAWS",
+
+    "gesture_class_num":10,
+    "sample_rate":1,
+
+    "parent_dirs": {
+      "result_dir": "./result",
+      "graph_dir": "./graph",
+      "tcn_log_dir": "./tcn_log",
+      "trpo_model_dir": "./trpo_model",
+      "raw_feature_dir": "./raw_features",
+      "tcn_feature_dir": "./tcn_features",
+      "split_info_dir": "./splits",
+      "tcn_model_dir": "./tcn_model"
+    },
 
 
    "raw_feature_dir":"./raw_features",

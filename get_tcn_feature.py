@@ -9,13 +9,14 @@ import torch.nn as nn
 from random import randrange
 from torch.autograd import Variable
 from tcn_model import EncoderDecoderNet
-from my_dataset import JIGSAWS_Dataset
+from my_dataset import RawFeatureDataset
 
 from logger import Logger
 import utils
 import pdb
 
-from config import tcn_feature_dir, sample_rate, raw_feature_dir
+from config import (tcn_feature_dir, sample_rate, 
+                    raw_feature_dir, dataset_name)
 
 
 def extract_feature(model, dataset):
@@ -68,22 +69,24 @@ def get_feature_by_split(model_params, feature_type, naming):
         n_layers = len(model_params['encoder_params']['layer_sizes'])
 
         # Dataset
-        train_dataset = JIGSAWS_Dataset(feature_dir,
-                                        train_trail_list,
-                                        feature_type=feature_type,
-                                        encode_level=n_layers,
-                                        sample_rate=sample_rate,
-                                        sample_aug=True,
-                                        normalization=[None, None])
+        train_dataset = RawFeatureDataset(dataset_name,
+                                          feature_dir,
+                                          train_trail_list,
+                                          feature_type=feature_type,
+                                          encode_level=n_layers,
+                                          sample_rate=sample_rate,
+                                          sample_aug=False,
+                                          normalization=[None, None])
 
         test_norm = [train_dataset.get_means(), train_dataset.get_stds()]
-        test_dataset = JIGSAWS_Dataset(feature_dir,
-                                       test_trail_list,
-                                       feature_type=feature_type,
-                                       encode_level=n_layers,
-                                       sample_rate=sample_rate,
-                                       sample_aug=False,
-                                       normalization=test_norm)
+        test_dataset = RawFeatureDataset(dataset_name,
+                                         feature_dir,
+                                         test_trail_list,
+                                         feature_type=feature_type,
+                                         encode_level=n_layers,
+                                         sample_rate=sample_rate,
+                                         sample_aug=False,
+                                         normalization=test_norm)
 
         
         train_packed_data = extract_feature(model, train_dataset)

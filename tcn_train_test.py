@@ -8,13 +8,14 @@ import torch.nn as nn
 from random import randrange
 from torch.autograd import Variable
 from tcn_model import EncoderDecoderNet
-from my_dataset import JIGSAWS_Dataset
+from my_dataset import RawFeatureDataset
 
 from logger import Logger
 import utils
 import pdb
 
-from config import raw_feature_dir, sample_rate, gesture_class_num
+from config import (raw_feature_dir, sample_rate, graph_dir,
+                    gesture_class_num, dataset_name)
 
 
 def train_model(model, 
@@ -77,26 +78,33 @@ def train_model(model,
 
 
         if log_dir is not None:
-            train_result = test_model(model, train_dataset)
-            t_accuracy, t_edit_score, t_loss, _ = train_result
+            train_result = test_model(model, train_dataset, loss_weights)
+            t_accuracy, t_edit_score, t_loss, t_f_scores = train_result
 
-            val_result = test_model(model, val_dataset)
-            v_accuracy, v_edit_score, v_loss, _ = val_result
+            val_result = test_model(model, val_dataset, loss_weights)
+            v_accuracy, v_edit_score, v_loss, v_f_scores = val_result
 
             logger.scalar_summary('t_accuracy', t_accuracy, epoch)
             logger.scalar_summary('t_edit_score', t_edit_score, epoch)
             logger.scalar_summary('t_loss', t_loss, epoch)
+            logger.scalar_summary('t_f_scores_10', t_f_scores[0], epoch)
+            logger.scalar_summary('t_f_scores_25', t_f_scores[1], epoch)
+            logger.scalar_summary('t_f_scores_50', t_f_scores[2], epoch)
+            logger.scalar_summary('t_f_scores_75', t_f_scores[3], epoch)
 
             logger.scalar_summary('v_accuracy', v_accuracy, epoch)
             logger.scalar_summary('v_edit_score', v_edit_score, epoch)
             logger.scalar_summary('v_loss', v_loss, epoch)
-            
+            logger.scalar_summary('v_f_scores_10', v_f_scores[0], epoch)
+            logger.scalar_summary('v_f_scores_25', v_f_scores[1], epoch)
+            logger.scalar_summary('v_f_scores_50', v_f_scores[2], epoch)
+            logger.scalar_summary('v_f_scores_75', v_f_scores[3], epoch)
 
         if trained_model_file is not None:
             torch.save(model.state_dict(), trained_model_file)
 
 
-def test_model(model, test_dataset, loss_weights=None):
+def test_model(model, test_dataset, loss_weights=None, plot_graph=False):
 
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                         batch_size=1, shuffle=False)
@@ -137,22 +145,32 @@ def test_model(model, test_dataset, loss_weights=None):
         gesture = gesture[:trail_len]
         pred = pred[:trail_len]
 
-        # utils.plot_barcode(gesture.data.cpu().numpy(),
-        #                    pred.cpu().numpy(), show=False,
-        #                    save_file='./graphs/{}'.format(data['name'][0]))
-
         preditions.append(pred.cpu().numpy())
         gts.append(gesture.data.cpu().numpy())
+
+        # Plot  
+        if plot_graph:    
+            graph_file = os.path.join(graph_dir, 'tcn_{}'.format(
+                                    utils.generate_random_str(size=20)))
+
+            utils.plot_barcode(gt=gesture.data.cpu().numpy(), 
+                               pred=pred.cpu().numpy(), 
+                               visited_pos=None,
+                               show=False, save_file=graph_file)
 
     avg_loss = total_loss / len(test_loader.dataset)
     edit_score = utils.get_edit_score(preditions, gts)
     accuracy = utils.get_accuracy_colin(preditions, gts)
     #accuracy = utils.get_accuracy(preditions, gts)
 
+    bg_class = 0 if dataset_name != 'JIGSAWS' else None
+    
     f_scores = []
     for overlap in [0.1, 0.25, 0.5, 0.75]:
         f_scores.append(utils.get_overlap_f1_colin(preditions, gts,
-            n_classes=gesture_class_num, bg_class=None, overlap=overlap))
+                                        n_classes=gesture_class_num, 
+                                        bg_class=bg_class, 
+                                        overlap=overlap))
 
     model.train()
     return accuracy, edit_score, avg_loss, f_scores
@@ -188,22 +206,24 @@ def cross_validate(model_params, train_params, feature_type, naming):
         n_layers = len(model_params['encoder_params']['layer_sizes'])
 
         # Dataset
-        train_dataset = JIGSAWS_Dataset(feature_dir,
-                                        train_trail_list,
-                                        feature_type=feature_type,
-                                        encode_level=n_layers,
-                                        sample_rate=sample_rate,
-                                        sample_aug=True,
-                                        normalization=[None, None])
+        train_dataset = RawFeatureDataset(dataset_name, 
+                                          feature_dir,
+                                          train_trail_list,
+                                          feature_type=feature_type,
+                                          encode_level=n_layers,
+                                          sample_rate=sample_rate,
+                                          sample_aug=False,
+                                          normalization=[None, None])
 
         test_norm = [train_dataset.get_means(), train_dataset.get_stds()]
-        test_dataset = JIGSAWS_Dataset(feature_dir,
-                                       test_trail_list,
-                                       feature_type=feature_type,
-                                       encode_level=n_layers,
-                                       sample_rate=sample_rate,
-                                       sample_aug=False,
-                                       normalization=test_norm)
+        test_dataset = RawFeatureDataset(dataset_name, 
+                                         feature_dir,
+                                         test_trail_list,
+                                         feature_type=feature_type,
+                                         encode_level=n_layers,
+                                         sample_rate=sample_rate,
+                                         sample_aug=False,
+                                         normalization=test_norm)
 
         loss_weights = utils.get_class_weights(train_dataset)
         #loss_weights = None
@@ -221,7 +241,8 @@ def cross_validate(model_params, train_params, feature_type, naming):
         model.load_state_dict(torch.load(trained_model_file))
 
         acc, edit, _, f_scores = test_model(model, test_dataset, 
-                                        loss_weights=loss_weights)
+                                            loss_weights=loss_weights,
+                                            plot_graph=True)
 
         result.append([acc, edit, f_scores[0], f_scores[1], 
                                   f_scores[2], f_scores[3]])

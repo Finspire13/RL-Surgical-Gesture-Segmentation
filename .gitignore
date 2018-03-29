@@ -5,6 +5,8 @@ result/*
 trpo_model/*
 graph/*
 
+summary*
+
 raw_features/*
 splits/*
 

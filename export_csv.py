@@ -1,24 +1,32 @@
 import numpy as np
 import os
+import pdb
 
-file = open('summary.csv','w')
+# To be modified
 
-entries = os.listdir('./result')
-entries.sort()
+datasets = os.listdir('./result')
 
-for entry in entries:
-    
-    result_file = os.path.join('./result',entry)
+for dataset in datasets:
+    file = open('summary_{}.csv'.format(dataset),'w')
 
-    if entry.startswith('trpo'):
-        entry_result = np.load(result_file).mean(0).mean(0).mean(0).mean(0)
-    elif entry.startswith('tcn'):
-        entry_result = np.load(result_file).mean(0).mean(0)
+    result_dir = os.path.join('./result', dataset)
 
-    line = str(entry)
-    for i in range(len(entry_result)):
-        line += ','
-        line += str(entry_result[i])
-    line += '\n'
+    entries = os.listdir(result_dir)
+    entries.sort()
 
-    file.write(line)
+    for entry in entries:
+        
+        result_file = os.path.join(result_dir, entry)
+
+        if entry.startswith('trpo'):
+            entry_result = np.load(result_file).mean(0).mean(0).mean(0).mean(0)
+        elif entry.startswith('tcn'):
+            entry_result = np.load(result_file).mean(0).mean(0)
+
+        line = str(entry)
+        for i in range(len(entry_result)):
+            line += ','
+            line += str(entry_result[i])
+        line += '\n'
+
+        file.write(line)

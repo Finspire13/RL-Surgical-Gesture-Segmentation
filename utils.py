@@ -6,12 +6,16 @@ import torch
 import shutil
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('AGG')    # Show Plot Disabled
 import matplotlib.pyplot as plt
 import random
+import string
+
 
 import pdb
 
-################## Random Seed ####################
+################## Random ##########################
 
 def set_global_seeds(seed, use_cudnn=True):
     torch.backends.cudnn.enabled = use_cudnn   # Too slow
@@ -21,6 +25,8 @@ def set_global_seeds(seed, use_cudnn=True):
         np.random.seed(seed)
         random.seed(seed)
 
+def generate_random_str(size, chs=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chs) for _ in range(size))
 
 ################### Trail List ######################
 
@@ -157,7 +163,7 @@ def get_transition_matrix(dataset): # TCN
 def get_normalized_transition_matrix(dataset): # TCN
     from config import gesture_class_num
 
-    class_num = gesture_class_num + 1
+    class_num = gesture_class_num + 1   # Including Init
     matrix = get_transition_matrix(dataset).astype(float)
 
     for i in range(class_num):
@@ -166,8 +172,7 @@ def get_normalized_transition_matrix(dataset): # TCN
 
     return matrix
 
-
-def get_duration_statistics(dataset): # TCN
+def get_gesture_durations(dataset): # TCN
     from config import gesture_class_num
     
     class_num = gesture_class_num
@@ -186,6 +191,11 @@ def get_duration_statistics(dataset): # TCN
 
         durations[gesture[i-1]].append(count)
 
+    return durations
+
+def get_duration_statistics(dataset): # TCN
+
+    durations = get_gesture_durations(dataset)
 
     mus = [np.array(i).mean() for i in durations]
     sigmas = [np.array(i).std() for i in durations]
@@ -214,6 +224,7 @@ def visualize_result(result):
 
 
 def plot_trail(ls, pred=None, ys=None, show=True, save_file=None):
+
     fig = plt.figure()
     xs = np.arange(len(ls))
     plt.plot(xs, ls, 'b')
@@ -226,12 +237,20 @@ def plot_trail(ls, pred=None, ys=None, show=True, save_file=None):
     if show:
         plt.show()
 
+    plt.close(fig)
+
+
 def plot_barcode(gt=None, pred=None, visited_pos=None,
                  show=True, save_file=None):
     from config import gesture_class_num
 
+    if gesture_class_num <= 10:
+        color_map = plt.cm.tab10
+    else:
+        color_map = plt.cm.tab20
+
     axprops = dict(xticks=[], yticks=[], frameon=False)
-    barprops = dict(aspect='auto', cmap=plt.cm.tab10, 
+    barprops = dict(aspect='auto', cmap=color_map, 
                 interpolation='nearest', vmin=0, vmax=gesture_class_num-1)
 
     fig = plt.figure(figsize=(18, 4))
@@ -257,6 +276,7 @@ def plot_barcode(gt=None, pred=None, visited_pos=None,
         fig.savefig(save_file, dpi=400)
     if show:
         plt.show()
+
     plt.close(fig)
 
 

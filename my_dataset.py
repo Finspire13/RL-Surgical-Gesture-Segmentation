@@ -12,11 +12,12 @@ import utils
 import pdb
 
 # For TCN: raw feature
-class JIGSAWS_Dataset(Dataset):
-    def __init__(self, feature_dir, trail_list, feature_type,
+class RawFeatureDataset(Dataset):
+    def __init__(self, dataset_name,
+                 feature_dir, trail_list, feature_type,
                  encode_level, sample_rate=1, sample_aug=True,
                  normalization=None):
-        super(JIGSAWS_Dataset, self).__init__()
+        super(RawFeatureDataset, self).__init__()
 
         self.trail_list = trail_list
 
@@ -35,7 +36,21 @@ class JIGSAWS_Dataset(Dataset):
         for idx in range(len(self.trail_list)):
             
             trail_name = self.trail_list[idx]
-            data_file = os.path.join(feature_dir, trail_name + '.avi.mat')
+
+            if dataset_name == 'JIGSAWS':
+                data_file = os.path.join(feature_dir, 
+                    trail_name + '.avi.mat')
+
+            elif dataset_name in ['50Salads_eval', '50Salads_mid']:
+                data_file = os.path.join(feature_dir, 
+                    'rgb-' + trail_name + '.avi.mat')
+
+            elif dataset_name == 'GTEA':
+                data_file = os.path.join(feature_dir, 
+                    trail_name + '.mat')
+            else:
+                raise Exception('Invalid Dataset Name!') 
+            
             trail_data = scipy.io.loadmat(data_file)
 
             if feature_type == 'visual':
