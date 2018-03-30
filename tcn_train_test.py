@@ -104,7 +104,7 @@ def train_model(model,
             torch.save(model.state_dict(), trained_model_file)
 
 
-def test_model(model, test_dataset, loss_weights=None, plot_graph=False):
+def test_model(model, test_dataset, loss_weights=None, plot_naming=None):
 
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                         batch_size=1, shuffle=False)
@@ -149,21 +149,22 @@ def test_model(model, test_dataset, loss_weights=None, plot_graph=False):
         gts.append(gesture.data.cpu().numpy())
 
         # Plot  
-        if plot_graph:    
-            graph_file = os.path.join(graph_dir, 'tcn_{}'.format(
-                                    utils.generate_random_str(size=20)))
+        if plot_naming:    
+            graph_file = os.path.join(graph_dir, '{}_seq_{}'.format(
+                                            plot_naming, str(i)))
 
             utils.plot_barcode(gt=gesture.data.cpu().numpy(), 
                                pred=pred.cpu().numpy(), 
                                visited_pos=None,
                                show=False, save_file=graph_file)
 
+    bg_class = 0 if dataset_name != 'JIGSAWS' else None
+
     avg_loss = total_loss / len(test_loader.dataset)
-    edit_score = utils.get_edit_score(preditions, gts)
+    edit_score = utils.get_edit_score_colin(preditions, gts,
+                                            bg_class=bg_class)
     accuracy = utils.get_accuracy_colin(preditions, gts)
     #accuracy = utils.get_accuracy(preditions, gts)
-
-    bg_class = 0 if dataset_name != 'JIGSAWS' else None
     
     f_scores = []
     for overlap in [0.1, 0.25, 0.5, 0.75]:
@@ -242,7 +243,7 @@ def cross_validate(model_params, train_params, feature_type, naming):
 
         acc, edit, _, f_scores = test_model(model, test_dataset, 
                                             loss_weights=loss_weights,
-                                            plot_graph=True)
+                                            plot_naming=split_naming)
 
         result.append([acc, edit, f_scores[0], f_scores[1], 
                                   f_scores[2], f_scores[3]])
