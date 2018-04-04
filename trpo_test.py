@@ -11,8 +11,9 @@ import tensorflow as tf
 
 from my_dataset import FeatureDataset
 from my_env import MyEnv
-from config import (tcn_feature_dir, rl_params, trpo_model_dir, result_dir,
-                    trpo_test_run_num, graph_dir, gesture_class_num)
+from config import (tcn_feature_dir, rl_params, trpo_model_dir,
+                    result_dir, trpo_test_run_num, graph_dir, 
+                    gesture_class_num, dataset_name)
 import os
 import utils
 import numpy as np
@@ -117,12 +118,14 @@ def test(feature_type, tcn_run_idx, split_idx, run_idx):
             step_opt = hist[:,0].astype(int)
             step_nums = step_opt.size
             
+            bg_class = 0 if dataset_name != 'JIGSAWS' else None
+
             episode_result[episode,0] = raw_env.get_accuracy()
-            episode_result[episode,1] = raw_env.get_edit_score()
-            episode_result[episode,2] = raw_env.get_overlap_f1(0.1)
-            episode_result[episode,3] = raw_env.get_overlap_f1(0.25)
-            episode_result[episode,4] = raw_env.get_overlap_f1(0.5)
-            episode_result[episode,5] = raw_env.get_overlap_f1(0.75)
+            episode_result[episode,1] = raw_env.get_edit_score(bg_class)
+            episode_result[episode,2] = raw_env.get_overlap_f1(0.1, bg_class)
+            episode_result[episode,3] = raw_env.get_overlap_f1(0.25, bg_class)
+            episode_result[episode,4] = raw_env.get_overlap_f1(0.5, bg_class)
+            episode_result[episode,5] = raw_env.get_overlap_f1(0.75, bg_class)
             episode_result[episode,6] = (step_opt==0).sum() / step_nums
             episode_result[episode,7] = (step_opt==1).sum() / step_nums
             episode_result[episode,8] = (step_opt==2).sum() / step_nums

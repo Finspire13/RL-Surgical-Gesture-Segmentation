@@ -181,12 +181,14 @@ class MyEnv(gym.Env):
     #     pass
 
     def get_accuracy(self):
-        return utils.get_accuracy(self.result, self.label)
+        return utils.get_accuracy_colin(self.result, self.label)
 
-    def get_edit_score(self):
-        return utils.get_edit_score(self.result, self.label)
+    def get_edit_score(self, bg_class):
+        return utils.get_edit_score_colin(self.result, self.label, 
+                                          bg_class=bg_class)
 
-    def get_overlap_f1(self, overlap):
+    def get_overlap_f1(self, overlap, bg_class):
         return utils.get_overlap_f1_colin(self.result, self.label,
                                           n_classes=self.class_num,
-                                          overlap=overlap)
+                                          overlap=overlap,
+                                          bg_class=bg_class)
