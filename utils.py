@@ -172,30 +172,34 @@ def get_normalized_transition_matrix(dataset): # TCN
 
     return matrix
 
-def get_gesture_durations(dataset): # TCN
+def get_gesture_durations(datasets): # TCN   # Multiple dataset possible
     from config import gesture_class_num
     
     class_num = gesture_class_num
     durations = [[] for i in range(class_num)]
 
-    for data in dataset:
-        gesture = data['label']
+    if type(datasets) != list:
+        raise Exception('Input should be put into an array!')
 
-        count = 1
-        for i in range(1, len(gesture)):
-            if gesture[i-1] == gesture[i]:
-                count += 1
-            else:
-                durations[gesture[i-1]].append(count)
-                count = 1
+    for dataset in datasets:
+        for data in dataset:
+            gesture = data['label']
 
-        durations[gesture[i-1]].append(count)
+            count = 1
+            for i in range(1, len(gesture)):
+                if gesture[i-1] == gesture[i]:
+                    count += 1
+                else:
+                    durations[gesture[i-1]].append(count)
+                    count = 1
+
+            durations[gesture[i-1]].append(count)
 
     return durations
 
 def get_duration_statistics(dataset): # TCN
 
-    durations = get_gesture_durations(dataset)
+    durations = get_gesture_durations([dataset])
 
     mus = [np.array(i).mean() for i in durations]
     sigmas = [np.array(i).std() for i in durations]
@@ -205,6 +209,30 @@ def get_duration_statistics(dataset): # TCN
     sigmas = [1 if np.isnan(i) else i  for i in sigmas]
 
     return np.array([mus, sigmas])
+
+def get_min_length(datasets):  # TCN          # Multiple dataset possible
+
+    durations = get_gesture_durations(datasets)
+
+    # Empty durations handled: Caution!!!
+    durations = [i if i else [float('inf')]  for i in durations]
+
+    mins = [np.array(i).min() for i in durations]
+    min_min = np.array(mins).min()
+
+    return float(min_min)
+
+def get_min_mean_length(datasets):  # TCN     # Multiple dataset possible
+
+    durations = get_gesture_durations(datasets)
+
+    # Empty durations handled: Caution!!!
+    durations = [i if i else [float('inf')]  for i in durations]
+
+    means = [np.array(i).mean() for i in durations]
+    min_mean = np.array(means).min()
+
+    return min_mean
 
 
 ################## Visualization ####################

@@ -4,7 +4,7 @@ import numpy as np
 import json
 from subprocess import Popen
 import importlib
-
+import math
 import config # To trigue config update
 
 # Config should be improved: so ugly!!!
@@ -19,10 +19,10 @@ def experiment_tcn():
 
     from config import result_dir, split_num, tcn_run_num, dataset_name
     
-    feature_types = ['visual']
+    #feature_types = ['visual']
 
-    # feature_types = ['visual'] if dataset_name == 'GTEA' \
-    #                 else ['sensor', 'visual']
+    feature_types = ['visual'] if dataset_name == 'GTEA' \
+                    else ['sensor', 'visual']
 
     for feature_type in feature_types:
 
@@ -53,10 +53,10 @@ def experiment_trpo(naming):
                         dataset_name, split_num, tcn_run_num, 
                         trpo_test_run_num, trpo_train_run_num)
 
-    feature_types = ['visual']
+    #feature_types = ['visual']
 
-    # feature_types = ['visual'] if dataset_name == 'GTEA' \
-    #             else ['sensor', 'visual']
+    feature_types = ['visual'] if dataset_name == 'GTEA' \
+                else ['sensor', 'visual']
 
     trpo_train_cmd = 'python3 trpo_train.py '
     trpo_test_cmd = 'python3 trpo_test.py '
@@ -140,8 +140,6 @@ def experiment_trpo(naming):
 
 def update_config_file(key, value):
 
-    from config import sample_rate
-
     all_params = json.load(open('config.json'))
     all_params[key] = value
 
@@ -164,6 +162,9 @@ def update_config_file(key, value):
         kernel_size_dict = {'JIGSAWS':51, '50Salads_eval':63, 
                             '50Salads_mid':63, 'GTEA':63}
 
+        k_steps_dict = {'JIGSAWS':[4, 21], '50Salads_eval':[1, 20],      #19.77
+                        '50Salads_mid':[1, 5], 'GTEA':[1, 15]}           #4.61 14.99   
+
         # Appending Dataset Subdir
         for d in all_dirs:
             all_params[d] = os.path.join(all_params['parent_dirs'][d], 
@@ -172,7 +173,7 @@ def update_config_file(key, value):
         all_params['split_num'] = split_num_dict[value]
         all_params['gesture_class_num'] = class_num_dict[value]
 
-        kernel_size = kernel_size_dict[value] // sample_rate
+        kernel_size = kernel_size_dict[value] // all_params['sample_rate']
 
         model_params = all_params['tcn_params']['model_params']
         model_params['class_num'] = class_num_dict[value]
@@ -180,10 +181,25 @@ def update_config_file(key, value):
         model_params['decoder_params']['kernel_size'] = kernel_size
         all_params['tcn_params']['model_params'] = model_params
 
+        # Set k_steps
+        k_steps = []
+        for k in k_steps_dict[value]:
+            k_steps.append(math.ceil(k / all_params['sample_rate']))
+
+        all_params['rl_params']['k_steps'] = k_steps
+
+        print('KStep Set to:---------- {}'.format(k_steps))
+
+
     with open('config.json', 'w') as f:
         json.dump(all_params, f, indent=2)
 
     importlib.reload(config)
+
+
+def init_config():
+    all_params = json.load(open('config.json'))
+    update_config_file(['dataset_name'], all_params['dataset_name'])
 
 
 def main():
@@ -191,49 +207,24 @@ def main():
     # Set seed
     #utils.set_global_seeds(777, True)
 
+    # init_config()
+    # update_config_file('dataset_name', '50Salads_eval')
+    # utils.set_up_dirs()
+    # #utils.clean_up()
+    # #experiment_tcn()
+    # experiment_trpo('full')
+
     for name in ['JIGSAWS', 'GTEA', '50Salads_eval', '50Salads_mid']:
         update_config_file('dataset_name', name)
         utils.set_up_dirs()
         utils.clean_up()
         experiment_tcn()
 
-    # from config import all_params
-
     # all_params['rl_params']['env_mode'] = 'full'
     # with open('config.json', 'w') as f:
     #     json.dump(all_params, f, indent=2)
     # experiment_trpo('full')
 
-
-    # all_params['rl_params']['env_mode'] = 'no_tcn'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('no_tcn')
-
-
-    # all_params['rl_params']['env_mode'] = 'no_future'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('no_future')
-
-
-    # all_params['rl_params']['env_mode'] = 'no_hint'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('no_hint')
-
-
-    # for k in [1, 2, 4, 8, 16, 32]:
-
-    #     all_params['rl_params']['env_mode'] = 'full'
-    #     all_params['rl_params']['k_steps'] = [k]
-    #     all_params['rl_params']['glimpse'] = [k]
-    #     all_params['rl_params']['reward_alpha'] = 0
-
-    #     with open('config.json', 'w') as f:
-    #         json.dump(all_params, f, indent=2)
-
-    #     experiment_trpo(str(k))
 
 
 if __name__ == '__main__':
