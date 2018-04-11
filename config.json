@@ -1,27 +1,14 @@
 {
-    "sample_rate":1,
-
-    "tcn_run_num":5,
-    "trpo_test_run_num":10,
-    "trpo_train_run_num":3,
-
-    "parent_dirs":{
-        "result_dir":"./result",
-        "graph_dir":"./graph",
-        "tcn_log_dir":"./tcn_log",
-        "trpo_model_dir":"./trpo_model",
-        "raw_feature_dir":"./raw_features",
-        "tcn_feature_dir":"./tcn_features",
-        "split_info_dir":"./splits",
-        "tcn_model_dir":"./tcn_model"
+    "experiment_setup":{
+        "sample_rate":1,
+        "tcn_run_num":5,
+        "trpo_test_run_num":10,
+        "trpo_train_run_num":3
     },
-
     "dataset_name":"JIGSAWS",
-
     "JIGSAWS":{
         "gesture_class_num":10,
         "split_num":8,
-
         "raw_feature_dir":"./raw_features/JIGSAWS",
         "split_info_dir":"./splits/JIGSAWS",
         "tcn_log_dir":"./tcn_log/JIGSAWS",
@@ -30,7 +17,6 @@
         "result_dir":"./result/JIGSAWS",
         "graph_dir":"./graph/JIGSAWS",
         "trpo_model_dir":"./trpo_model/JIGSAWS",
-
         "tcn_params":{
             "model_params":{
                 "class_num":10,
@@ -71,7 +57,6 @@
                 "weight_decay":0.0001
             }
         },
-
         "rl_params":{
             "tcn_feature_num":32,
             "k_steps":[
@@ -90,11 +75,9 @@
             "discount_factor":0.9
         }
     },
-
     "50Salads_eval":{
         "gesture_class_num":10,
         "split_num":5,
-
         "raw_feature_dir":"./raw_features/50Salads_eval",
         "split_info_dir":"./splits/50Salads_eval",
         "tcn_log_dir":"./tcn_log/50Salads_eval",
@@ -103,7 +86,6 @@
         "result_dir":"./result/50Salads_eval",
         "graph_dir":"./graph/50Salads_eval",
         "trpo_model_dir":"./trpo_model/50Salads_eval",
-
         "tcn_params":{
             "model_params":{
                 "class_num":10,
@@ -144,7 +126,6 @@
                 "weight_decay":0.0001
             }
         },
-        
         "rl_params":{
             "tcn_feature_num":32,
             "k_steps":[
@@ -163,11 +144,9 @@
             "discount_factor":0.9
         }
     },
-
     "50Salads_mid":{
         "gesture_class_num":18,
         "split_num":5,
-
         "raw_feature_dir":"./raw_features/50Salads_mid",
         "split_info_dir":"./splits/50Salads_mid",
         "tcn_log_dir":"./tcn_log/50Salads_mid",
@@ -176,7 +155,6 @@
         "result_dir":"./result/50Salads_mid",
         "graph_dir":"./graph/50Salads_mid",
         "trpo_model_dir":"./trpo_model/50Salads_mid",
-
         "tcn_params":{
             "model_params":{
                 "class_num":18,
@@ -217,7 +195,6 @@
                 "weight_decay":0.0001
             }
         },
-        
         "rl_params":{
             "tcn_feature_num":32,
             "k_steps":[
@@ -236,11 +213,9 @@
             "discount_factor":0.9
         }
     },
-
     "GTEA":{
         "gesture_class_num":11,
         "split_num":4,
-
         "raw_feature_dir":"./raw_features/GTEA",
         "split_info_dir":"./splits/GTEA",
         "tcn_log_dir":"./tcn_log/GTEA",
@@ -249,7 +224,6 @@
         "result_dir":"./result/GTEA",
         "graph_dir":"./graph/GTEA",
         "trpo_model_dir":"./trpo_model/GTEA",
-
         "tcn_params":{
             "model_params":{
                 "class_num":11,
@@ -290,7 +264,6 @@
                 "weight_decay":0.0001
             }
         },
-        
         "rl_params":{
             "tcn_feature_num":32,
             "k_steps":[
