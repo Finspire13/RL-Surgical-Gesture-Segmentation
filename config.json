@@ -98,7 +98,7 @@
                         96,
                         128
                     ],
-                    "kernel_size":63,
+                    "kernel_size":75,
                     "norm_type":"Channel"
                 },
                 "mid_lstm_params":{
@@ -115,7 +115,7 @@
                         64
                     ],
                     "transposed_conv":true,
-                    "kernel_size":63,
+                    "kernel_size":75,
                     "norm_type":"Channel"
                 }
             },
@@ -167,7 +167,7 @@
                         96,
                         128
                     ],
-                    "kernel_size":63,
+                    "kernel_size":45,
                     "norm_type":"Channel"
                 },
                 "mid_lstm_params":{
@@ -184,7 +184,7 @@
                         64
                     ],
                     "transposed_conv":true,
-                    "kernel_size":63,
+                    "kernel_size":45,
                     "norm_type":"Channel"
                 }
             },
@@ -236,7 +236,7 @@
                         96,
                         128
                     ],
-                    "kernel_size":63,
+                    "kernel_size":71,
                     "norm_type":"Channel"
                 },
                 "mid_lstm_params":{
@@ -253,7 +253,7 @@
                         64
                     ],
                     "transposed_conv":true,
-                    "kernel_size":63,
+                    "kernel_size":71,
                     "norm_type":"Channel"
                 }
             },
