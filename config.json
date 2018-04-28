@@ -146,7 +146,7 @@
     },
     "JIGSAWS_N":{
         "gesture_class_num":10,
-        "split_num":8,
+        "split_num":7,
         "raw_feature_dir":"./raw_features/JIGSAWS_N",
         "split_info_dir":"./splits/JIGSAWS_N",
         "tcn_log_dir":"./tcn_log/JIGSAWS_N",

@@ -37,7 +37,7 @@ class RawFeatureDataset(Dataset):
             
             trail_name = self.trail_list[idx]
 
-            if dataset_name == 'JIGSAWS':
+            if dataset_name in ['JIGSAWS', 'JIGSAWS_K', 'JIGSAWS_N']:
                 data_file = os.path.join(feature_dir, 
                     trail_name + '.avi.mat')
 

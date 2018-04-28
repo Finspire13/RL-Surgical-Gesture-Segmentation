@@ -134,6 +134,9 @@ def get_class_weights(dataset):  # RAW
 
     counts = get_class_counts(dataset)
 
+    if 0 in counts:
+        return None
+
     weights = [1/i for i in counts]
     w_sum = sum(weights)
     for i in range(class_num):
@@ -233,6 +236,18 @@ def get_min_mean_length(datasets):  # TCN     # Multiple dataset possible
     min_mean = np.array(means).min()
 
     return min_mean
+
+def get_mean_mean_length(datasets):  # TCN     # Multiple dataset possible
+
+    durations = get_gesture_durations(datasets)
+
+    # Empty durations handled: Caution!!!
+    durations = [i if i else [float('inf')]  for i in durations]
+
+    means = [np.array(i).mean() for i in durations]
+    mean_mean = np.array(means).mean()
+
+    return mean_mean
 
 
 ################## Visualization ####################
