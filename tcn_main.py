@@ -24,15 +24,23 @@ def main():
     feature_type = args.feature_type
 
     if feature_type == 'visual':
-        feature_size = 128
+
+        if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N']:
+            raise Exception('No Visual Data for this dataset!')
+        elif dataset_name in ['JIGSAWS', 'GTEA', '50Salads_eval', 
+                              '50Salads_mid']:
+            feature_size = 128
+        else:
+            raise Exception('Invalid Dataset Name!') 
+
     elif feature_type == 'sensor':
 
-        if dataset_name == 'JIGSAWS':
+        if dataset_name in ['JIGSAWS', 'JIGSAWS_K', 'JIGSAWS_N']:
             feature_size = 14
         elif dataset_name in ['50Salads_eval', '50Salads_mid']:
             feature_size = 30
         elif dataset_name == 'GTEA':
-            raise Exception('No Sensor Data for GTEA!')
+            raise Exception('No Sensor Data for this dataset!')
         else:
             raise Exception('Invalid Dataset Name!') 
 
