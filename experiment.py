@@ -19,10 +19,12 @@ def experiment_tcn():
 
     from config import result_dir, split_num, tcn_run_num, dataset_name
     
-    #feature_types = ['visual']
+    feature_types = ['sensor']
 
-    feature_types = ['visual'] if dataset_name == 'GTEA' \
-                    else ['sensor', 'visual']
+    # feature_types = ['visual'] if dataset_name == 'GTEA' \
+    #                 else ['sensor', 'visual']
+
+    ####################################################
 
     for feature_type in feature_types:
 
@@ -53,10 +55,12 @@ def experiment_trpo(naming):
                         dataset_name, split_num, tcn_run_num, 
                         trpo_test_run_num, trpo_train_run_num)
 
-    #feature_types = ['visual']
+    feature_types = ['sensor']
 
-    feature_types = ['visual'] if dataset_name == 'GTEA' \
-                else ['sensor', 'visual']
+    # feature_types = ['visual'] if dataset_name == 'GTEA' \
+    #             else ['sensor', 'visual']
+
+    ####################################################
 
     trpo_train_cmd = 'python3 trpo_train.py '
     trpo_test_cmd = 'python3 trpo_test.py '
@@ -138,58 +142,14 @@ def experiment_trpo(naming):
             shutil.move(item, graph_sub_dir)
 
 
-def update_config_file(key, value):
+def update_config_file(keys, value):
 
     all_params = json.load(open('config.json'))
-    all_params[key] = value
 
-    if key == 'dataset_name':
-
-        if value not in ['50Salads_eval', '50Salads_mid', 
-                         'GTEA', 'JIGSAWS']:
-            raise Exception('Invalid Dataset Name!') 
-
-        all_dirs = ['raw_feature_dir', 'split_info_dir', 'tcn_log_dir', 
-                    'tcn_model_dir', 'tcn_feature_dir', 'result_dir',
-                    'graph_dir', 'trpo_model_dir']
-
-        split_num_dict = {'JIGSAWS':8, '50Salads_eval':5,   # Problem!!!
-                          '50Salads_mid':5, 'GTEA':4}
-
-        class_num_dict = {'JIGSAWS':10, '50Salads_eval':10,   # 10, 9, 17, 10
-                          '50Salads_mid':18, 'GTEA':11}
-
-        kernel_size_dict = {'JIGSAWS':51, '50Salads_eval':63, 
-                            '50Salads_mid':63, 'GTEA':63}
-
-        k_steps_dict = {'JIGSAWS':[4, 21], '50Salads_eval':[1, 20],      #19.77
-                        '50Salads_mid':[1, 5], 'GTEA':[1, 15]}           #4.61 14.99   
-
-        # Appending Dataset Subdir
-        for d in all_dirs:
-            all_params[d] = os.path.join(all_params['parent_dirs'][d], 
-                                         all_params['dataset_name'])
-
-        all_params['split_num'] = split_num_dict[value]
-        all_params['gesture_class_num'] = class_num_dict[value]
-
-        kernel_size = kernel_size_dict[value] // all_params['sample_rate']
-
-        model_params = all_params['tcn_params']['model_params']
-        model_params['class_num'] = class_num_dict[value]
-        model_params['encoder_params']['kernel_size'] = kernel_size
-        model_params['decoder_params']['kernel_size'] = kernel_size
-        all_params['tcn_params']['model_params'] = model_params
-
-        # Set k_steps
-        k_steps = []
-        for k in k_steps_dict[value]:
-            k_steps.append(math.ceil(k / all_params['sample_rate']))
-
-        all_params['rl_params']['k_steps'] = k_steps
-
-        print('KStep Set to:---------- {}'.format(k_steps))
-
+    # Update the dict with a list of keys
+    temp = all_params
+    for key in keys[:-1]: temp = temp[key]
+    temp[keys[-1]] = value
 
     with open('config.json', 'w') as f:
         json.dump(all_params, f, indent=2)
@@ -197,35 +157,45 @@ def update_config_file(key, value):
     importlib.reload(config)
 
 
-def init_config():
-    all_params = json.load(open('config.json'))
-    update_config_file(['dataset_name'], all_params['dataset_name'])
-
-
 def main():
 
     # Set seed
     #utils.set_global_seeds(777, True)
 
-    # init_config()
-    # update_config_file('dataset_name', '50Salads_eval')
-    # utils.set_up_dirs()
-    # #utils.clean_up()
-    # #experiment_tcn()
-    # experiment_trpo('full')
+    # alpha_dict = {'50Salads_eval': 0.20, 
+    #               'GTEA': 0.375, 
+    #               '50Salads_mid': 0.35}   # Visual
 
-    for name in ['JIGSAWS', 'GTEA', '50Salads_eval', '50Salads_mid']:
-        update_config_file('dataset_name', name)
-        utils.set_up_dirs()
-        utils.clean_up()
+    alpha_dict = {'50Salads_eval': 0.15, 
+                  '50Salads_mid': 0.40}   # Sensor
+
+    for name in ['50Salads_eval', '50Salads_mid']:
+    #for name in ['GTEA', '50Salads_mid']:
+        update_config_file(['dataset_name'], name)
+        # utils.set_up_dirs()
+        # utils.clean_up()
         experiment_tcn()
 
-    # all_params['rl_params']['env_mode'] = 'full'
-    # with open('config.json', 'w') as f:
-    #     json.dump(all_params, f, indent=2)
-    # experiment_trpo('full')
+        update_config_file([name, 'rl_params', 'reward_alpha'], alpha_dict[name])
+        experiment_trpo('Test')
+
+        # # for alpha in [0.1, 0.125, 0.15, 0.175, 0.20, 
+        # #               0.225, 0.25, 0.275, 0.30, 0.35]:
+        # for alpha in [0.375, 0.40, 0.45, 0.50]:
+                      
+            
+            
 
 
 
 if __name__ == '__main__':
     main()
+
+
+
+# k_steps_dict = {'JIGSAWS':[4, 21], '50Salads_eval':[1, 20],      #19.77
+#                 '50Salads_mid':[1, 5], 'GTEA':[1, 15]}           #4.61 14.99  
+
+
+# reward_alpha_dict = {'JIGSAWS': 0.1, '50Salads_eval': 0.14,  # According to visual
+#                      '50Salads_mid': 0.25, 'GTEA': 0.27}  

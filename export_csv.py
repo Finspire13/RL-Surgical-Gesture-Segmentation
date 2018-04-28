@@ -15,6 +15,9 @@ for dataset in datasets:
     entries.sort()
 
     for entry in entries:
+
+        if 'run_' in entry:
+            continue
         
         result_file = os.path.join(result_dir, entry)
 
