@@ -129,12 +129,12 @@
         "rl_params":{
             "tcn_feature_num":32,
             "k_steps":[
-                4,
-                21
+                7,
+                30
             ],
             "glimpse":[
-                4,
-                21
+                7,
+                30
             ],
             "reward_alpha":0.1,
             "env_mode":"full",
@@ -198,12 +198,12 @@
         "rl_params":{
             "tcn_feature_num":32,
             "k_steps":[
-                4,
-                21
+                6,
+                33
             ],
             "glimpse":[
-                4,
-                21
+                6,
+                33
             ],
             "reward_alpha":0.1,
             "env_mode":"full",
