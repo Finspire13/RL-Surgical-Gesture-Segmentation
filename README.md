@@ -19,7 +19,7 @@ This repo includes two parts:
 
 The code is tested on the three tasks of JIGSAWS dataset (Video and sensor data for the suturing. Only sensor data for the knot-tying and the needle-passing).
 
-We use the same data features and splits as [Colin Lea](https://github.com/colincsl/TemporalConvolutionalNetworks). Request for the data and split files from Colin and put them into folder *raw_features* and *splits*.
+We use the same data features and splits as [Colin Lea](https://github.com/colincsl/TemporalConvolutionalNetworks). Request for the data and split files from Colin and put them into folder *./raw_features* and *./splits*.
 
 We also test on other datasets such as 50Salads and GTEA but do not formally benchmark or claim any results.
 
@@ -33,9 +33,13 @@ Setttings and hyper-parameters are in *config.json*. The defaults work well but 
 
 First setup the experiment in *experiment.py*. Then:
 
+`cd <this repo>`
+
 `python3 experiment.py`
 
 `python3 export_csv.py` 
+
+The results will be in CSV files. It takes about 24h for one dataset.
 
 ### Run TCN alone
 

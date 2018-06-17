@@ -19,11 +19,12 @@ def experiment_tcn():
 
     from config import result_dir, split_num, tcn_run_num, dataset_name
     
-    # feature_types = ['sensor']
-
-    feature_types = ['visual'] \
-        if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N', 'GTEA'] \
-        else ['sensor', 'visual']
+    if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N']:
+        feature_types = ['sensor']
+    elif dataset_name == 'GTEA':
+        feature_types = ['visual']
+    else:
+        feature_types = ['sensor', 'visual']
 
     ####################################################
 
@@ -56,11 +57,12 @@ def experiment_trpo(naming):
                         dataset_name, split_num, tcn_run_num, 
                         trpo_test_run_num, trpo_train_run_num)
 
-    # feature_types = ['sensor']
-
-    feature_types = ['visual'] \
-        if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N', 'GTEA'] \
-        else ['sensor', 'visual']
+    if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N']:
+        feature_types = ['sensor']
+    elif dataset_name == 'GTEA':
+        feature_types = ['visual']
+    else:
+        feature_types = ['sensor', 'visual']
 
     ####################################################
 
