@@ -19,10 +19,11 @@ def experiment_tcn():
 
     from config import result_dir, split_num, tcn_run_num, dataset_name
     
-    feature_types = ['sensor']
+    # feature_types = ['sensor']
 
-    # feature_types = ['visual'] if dataset_name == 'GTEA' \
-    #                 else ['sensor', 'visual']
+    feature_types = ['visual'] \
+        if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N', 'GTEA'] \
+        else ['sensor', 'visual']
 
     ####################################################
 
@@ -55,10 +56,11 @@ def experiment_trpo(naming):
                         dataset_name, split_num, tcn_run_num, 
                         trpo_test_run_num, trpo_train_run_num)
 
-    feature_types = ['sensor']
+    # feature_types = ['sensor']
 
-    # feature_types = ['visual'] if dataset_name == 'GTEA' \
-    #             else ['sensor', 'visual']
+    feature_types = ['visual'] \
+        if dataset_name in ['JIGSAWS_K', 'JIGSAWS_N', 'GTEA'] \
+        else ['sensor', 'visual']
 
     ####################################################
 
@@ -158,44 +160,15 @@ def update_config_file(keys, value):
 
 
 def main():
-
-    # Set seed
-    #utils.set_global_seeds(777, True)
-
-    # alpha_dict = {'50Salads_eval': 0.20, 
-    #               'GTEA': 0.375, 
-    #               '50Salads_mid': 0.35}   # Visual
-
-    alpha_dict = {'50Salads_eval': 0.15, 
-                  '50Salads_mid': 0.40}   # Sensor
-
-    for name in ['50Salads_eval', '50Salads_mid']:
-    #for name in ['GTEA', '50Salads_mid']:
+    
+    for name in ['JIGSAWS_K', 'JIGSAWS_N', 'JIGSAWS']:
         update_config_file(['dataset_name'], name)
-        # utils.set_up_dirs()
-        # utils.clean_up()
+        utils.set_up_dirs()
+        utils.clean_up()
         experiment_tcn()
-
-        update_config_file([name, 'rl_params', 'reward_alpha'], alpha_dict[name])
-        experiment_trpo('Test')
-
-        # # for alpha in [0.1, 0.125, 0.15, 0.175, 0.20, 
-        # #               0.225, 0.25, 0.275, 0.30, 0.35]:
-        # for alpha in [0.375, 0.40, 0.45, 0.50]:
-                      
-            
-            
-
+        experiment_trpo('full')
 
 
 if __name__ == '__main__':
     main()
 
-
-
-# k_steps_dict = {'JIGSAWS':[4, 21], '50Salads_eval':[1, 20],      #19.77
-#                 '50Salads_mid':[1, 5], 'GTEA':[1, 15]}           #4.61 14.99  
-
-
-# reward_alpha_dict = {'JIGSAWS': 0.1, '50Salads_eval': 0.14,  # According to visual
-#                      '50Salads_mid': 0.25, 'GTEA': 0.27}  
