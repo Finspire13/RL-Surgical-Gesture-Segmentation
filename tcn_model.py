@@ -4,7 +4,6 @@ from __future__ import print_function
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable
 from collections import OrderedDict
 
 import pdb
@@ -48,13 +47,13 @@ class LSTM_Layer(nn.Module):
             nl_x_nd = 1 * self.num_layers
 
         h0 = torch.zeros(nl_x_nd, batch_size, self.hidden_size)
-        h0 = Variable(h0.cuda())
+        h0 = h0.cuda()
 
         if self.use_gru:
             return h0
         else:
             c0 = torch.zeros(nl_x_nd, batch_size, self.hidden_size)
-            c0 = Variable(c0.cuda())
+            c0 = c0.cuda()
             return (h0, c0)
 
 
@@ -221,22 +220,6 @@ class EncoderDecoderNet(nn.Module):
         self.fc1 = nn.Linear(self.decoder.output_size, fc_size)
         self.fc2 = nn.Linear(fc_size, class_num)
 
-
-    # def forward(self, x): # x: (batch,seq,feature)
-
-    #     x = x.permute(0, 2, 1)  
-
-    #     x = self.encoder(x)
-    #     if self.middle_lstm is not None:
-    #         x = self.middle_lstm(x)
-
-    #     # Gesture branch
-    #     x = self.decoder(x)
-    #     x = x.permute(0, 2, 1)
-    #     x = F.relu(self.fc1(x))
-    #     x = self.fc2(x)
-
-    #     return x
 
     def forward(self, x):
         

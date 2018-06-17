@@ -6,7 +6,6 @@ import numpy as np
 import torch 
 import torch.nn as nn
 from random import randrange
-from torch.autograd import Variable
 from tcn_model import EncoderDecoderNet
 from my_dataset import RawFeatureDataset
 
@@ -53,11 +52,11 @@ def train_model(model,
         for i, data in enumerate(train_loader):
 
             feature = data['feature'].float()
-            feature = Variable(feature).cuda()
+            feature = feature.cuda()
 
             gesture = data['gesture'].long()
             gesture = gesture.view(-1)
-            gesture = Variable(gesture).cuda() 
+            gesture = gesture.cuda()
 
             # Forward
             out = model(feature)
@@ -72,7 +71,7 @@ def train_model(model,
 
             # Logging
             if log_dir is not None:
-                logger.scalar_summary('loss', loss.data[0], step)
+                logger.scalar_summary('loss', loss.item(), step)
 
             step += 1
 
@@ -122,41 +121,42 @@ def test_model(model, test_dataset, loss_weights=None, plot_naming=None):
     preditions = []
     gts=[]
 
-    for i, data in enumerate(test_loader):
+    with torch.no_grad():
+        for i, data in enumerate(test_loader):
 
-        feature = data['feature'].float()
-        feature = Variable(feature, volatile=True).cuda()
+            feature = data['feature'].float()
+            feature = feature.cuda()
 
-        gesture = data['gesture'].long()
-        gesture = gesture.view(-1)
-        gesture = Variable(gesture, volatile=True).cuda() 
+            gesture = data['gesture'].long()
+            gesture = gesture.view(-1)
+            gesture = gesture.cuda()
 
-        # Forward
-        out = model(feature)
-        out = out.squeeze(0)
+            # Forward
+            out = model(feature)
+            out = out.squeeze(0)
 
-        loss = criterion(input=out, target=gesture)
+            loss = criterion(input=out, target=gesture)
 
-        total_loss += loss.data[0]
+            total_loss += loss.item()
 
-        pred = out.data.max(1)[1]
+            pred = out.data.max(1)[1]
 
-        trail_len = (gesture.data.cpu().numpy()!=-1).sum()
-        gesture = gesture[:trail_len]
-        pred = pred[:trail_len]
+            trail_len = (gesture.data.cpu().numpy()!=-1).sum()
+            gesture = gesture[:trail_len]
+            pred = pred[:trail_len]
 
-        preditions.append(pred.cpu().numpy())
-        gts.append(gesture.data.cpu().numpy())
+            preditions.append(pred.cpu().numpy())
+            gts.append(gesture.data.cpu().numpy())
 
-        # Plot  
-        if plot_naming:    
-            graph_file = os.path.join(graph_dir, '{}_seq_{}'.format(
-                                            plot_naming, str(i)))
+            # Plot  
+            if plot_naming:    
+                graph_file = os.path.join(graph_dir, '{}_seq_{}'.format(
+                                                plot_naming, str(i)))
 
-            utils.plot_barcode(gt=gesture.data.cpu().numpy(), 
-                               pred=pred.cpu().numpy(), 
-                               visited_pos=None,
-                               show=False, save_file=graph_file)
+                utils.plot_barcode(gt=gesture.data.cpu().numpy(), 
+                                   pred=pred.cpu().numpy(), 
+                                   visited_pos=None,
+                                   show=False, save_file=graph_file)
 
     bg_class = 0 if dataset_name != 'JIGSAWS' else None
 

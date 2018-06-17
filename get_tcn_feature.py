@@ -7,7 +7,6 @@ import gc
 import torch 
 import torch.nn as nn
 from random import randrange
-from torch.autograd import Variable
 from tcn_model import EncoderDecoderNet
 from my_dataset import RawFeatureDataset
 
@@ -27,19 +26,20 @@ def extract_feature(model, dataset):
                                          batch_size=1, shuffle=False)
     model.eval()
 
-    for i, data in enumerate(loader):
+    with torch.no_grad():
+      for i, data in enumerate(loader):
 
-        feature = data['feature'].float()   # 1x2049x76
-        feature = Variable(feature, volatile=True).cuda()
+          feature = data['feature'].float()   # 1x2049x76
+          feature = feature.cuda()
 
-        gesture = data['gesture'].long()       # 1x2029x1
-        gesture = gesture.view(-1).numpy()
+          gesture = data['gesture'].long()       # 1x2029x1
+          gesture = gesture.view(-1).numpy()
 
-        # Forward
-        out = model.extract_feature(feature)
-        out = out.squeeze().cpu().data.numpy()
+          # Forward
+          out = model.extract_feature(feature)
+          out = out.squeeze().cpu().data.numpy()
 
-        packed_data.append([out, gesture])
+          packed_data.append([out, gesture])
 
     return packed_data
 
