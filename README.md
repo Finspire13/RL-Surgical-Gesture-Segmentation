@@ -1,6 +1,6 @@
 # RL-Surgical-Gesture-Segmentation
 
-This is the code of [*Deep Reinforcement Learning for Surgical Gesture Segmentation and Classification*](https://arxiv.org/abs/1806.08089)
+This is the code of [*Deep Reinforcement Learning for Surgical Gesture Segmentation and Classification*](https://arxiv.org/abs/1806.08089)([Supplementary](https://github.com/Finspire13/RL-Surgical-Gesture-Segmentation/blob/master/supplementary.pdf))
 
 (To appear at MICCAI 2018)
 
