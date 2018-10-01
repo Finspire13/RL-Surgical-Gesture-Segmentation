@@ -2,7 +2,7 @@
 
 This is the code of [*Deep Reinforcement Learning for Surgical Gesture Segmentation and Classification*](https://arxiv.org/abs/1806.08089)([Supplementary](https://github.com/Finspire13/RL-Surgical-Gesture-Segmentation/blob/master/supplementary.pdf))
 
-(To appear at MICCAI 2018)
+(MICCAI 2018)
 
 This repo includes two parts:
 1. Re-implementation of Temporal Convolutional Networks (For the original version, please refer to [Colin Lea's repo](https://github.com/colincsl/TemporalConvolutionalNetworks)).
@@ -78,4 +78,13 @@ Any question please contact with Daochang Liu at finspire13@gmail.com.
 
 # Citation
 
-To be provided.
+@InProceedings{10.1007/978-3-030-00937-3_29,
+  author="Liu, Daochang and Jiang, Tingting",
+  title="Deep Reinforcement Learning for Surgical Gesture Segmentation and Classification",
+  booktitle="Medical Image Computing and Computer Assisted Intervention -- MICCAI 2018",
+  year="2018",
+  publisher="Springer International Publishing",
+  address="Cham",
+  pages="247--255",
+  isbn="978-3-030-00937-3"
+}
