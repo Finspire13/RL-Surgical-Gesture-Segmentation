@@ -24,8 +24,11 @@ We use the same data features and splits as [Colin Lea](https://github.com/colin
 We also test on other datasets such as 50Salads and GTEA but do not formally benchmark or claim any results.
 
 (Please be careful about the naming of JIGSAWS:
+
 'JIGSAWS': The suturing task in JIGSAWS
+
 'JIGSAWS_K': The knot tying task in JIGSAWS
+
 'JIGSAWS_N': The needle passing task in JIGSAWS)
 
 # How to Run
