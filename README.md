@@ -83,7 +83,7 @@ Folder *trpo_model*: Trained models for RL
 
 # Contact
 
-Any question please contact with Daochang Liu at finspire13@gmail.com.
+Any question please contact with Daochang Liu at finspire13@gmail.com
 
 # Citation
 
